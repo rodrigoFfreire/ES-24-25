@@ -46,6 +46,9 @@ public class Institution {
     @OneToMany(mappedBy = "institution", orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Activity> activities = new ArrayList<>();
 
+    @OneToMany(mappedBy = "institution")
+    private List<Suggestion> suggestions = new ArrayList<>();
+
     @OneToMany(mappedBy = "institution" )
     private List<Assessment> assessments = new ArrayList<>();
 
@@ -190,4 +193,13 @@ public class Institution {
     public void deleteAssessment(Assessment assessment) {
         this.assessments.remove(assessment);
     }
+
+    public List<Suggestion> getSuggestions() {
+        return suggestions;
+    }
+
+    public void addSuggestions(Suggestion suggestion) {
+        this.suggestions.add(suggestion);
+    }
+    
 }

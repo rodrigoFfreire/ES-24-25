@@ -28,6 +28,9 @@ public class Volunteer extends User {
     @OneToOne(mappedBy = "volunteer", orphanRemoval = true, cascade = CascadeType.ALL)
     private VolunteerProfile profile;
 
+    @OneToMany(mappedBy = "volunteer")
+    private List<Suggestion> suggestions = new ArrayList<>();
+
     public Volunteer() {
     }
 
@@ -116,4 +119,13 @@ public class Volunteer extends User {
     public VolunteerProfile getProfile() { return profile; }
 
     public void setProfile(VolunteerProfile profile) { this.profile = profile; }
+    
+    public List<Suggestion> getSuggestions() {
+        return this.suggestions;
+    }
+
+    public void addSuggestion(Suggestion suggestion) {
+        this.suggestions.add(suggestion);
+    }
+
 }
