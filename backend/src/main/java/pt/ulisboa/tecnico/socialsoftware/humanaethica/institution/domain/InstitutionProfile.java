@@ -2,8 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain;
 
 import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessment;
-import java.util.ArrayList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,8 +14,8 @@ public class InstitutionProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "institution_id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "institution_id")
     private Institution institution;
 
     @Column(name = "short_description", length = 255)
@@ -36,7 +36,7 @@ public class InstitutionProfile {
     @Column(name = "average_rating")
     private float averageRating;
 
-    @OneToMany(mappedBy = "institutionProfile", fetch = FetchType.LAZY)
+    @OneToMany()
     private List<Assessment> assessments = new ArrayList<>();
 
     public InstitutionProfile() {}
