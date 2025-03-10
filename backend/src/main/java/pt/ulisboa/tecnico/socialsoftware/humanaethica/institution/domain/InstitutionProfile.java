@@ -50,7 +50,54 @@ public class InstitutionProfile {
         setNumAssessments(numAssessments);
         setNumVolunteers(numVolunteers);
         setAverageRating(averageRating);
+
+        verifyInvariants();
     }
+    public void verifyInvariants() {
+        verifyDescriptionLength();
+        verifyRecentAssessments();
+        verifySelectedAssessments();
+    }
+
+    private void verifyDescriptionLength() {
+        if (shortDescription == null || shortDescription.length() < 10) {
+            throw new IllegalArgumentException("A descrição da instituição deve ter pelo menos 10 caracteres.");
+        }
+    }
+
+    private void verifyRecentAssessments() {
+        if (assessments.size() > 0) {
+            int totalAssessments = assessments.size();
+            
+            List<Assessment> allInstitutionAssessments = institution.getAssessments(); 
+            
+            allInstitutionAssessments.sort((a1, a2) -> a2.getReviewDate().compareTo(a1.getReviewDate()));
+            
+            int recentThreshold = (int) Math.ceil(allInstitutionAssessments.size() * 0.2);
+            
+            List<Assessment> mostRecentAssessments = allInstitutionAssessments.stream()
+                    .limit(recentThreshold)
+                    .toList();
+            
+            long recentAssessmentsCount = assessments.stream()
+                    .filter(mostRecentAssessments::contains)
+                    .count();
+            
+            if (recentAssessmentsCount < totalAssessments * 0.2) {
+                throw new IllegalArgumentException("Pelo menos 20% das avaliações devem ser as mais recentes.");
+            }
+        }
+    }
+    
+    private void verifySelectedAssessments() {
+        int selectedAssessmentsCount = assessments.size();
+        int totalAssessments = institution.getAssessments().size();
+
+        if (selectedAssessmentsCount < totalAssessments * 0.5) {
+            throw new IllegalArgumentException("Pelo menos 50% das avaliações devem ser selecionadas.");
+        }
+    }
+
 
     public Integer getId() {
         return id;
