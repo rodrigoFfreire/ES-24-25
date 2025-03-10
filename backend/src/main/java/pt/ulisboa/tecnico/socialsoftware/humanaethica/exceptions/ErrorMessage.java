@@ -75,6 +75,7 @@ public enum ErrorMessage {
     REPORT_ACTIVTIY_IS_ALREADY_REPORTED("The activity is already reported"),
     REPORT_AFTER_ACTIVTY_CLOSED("The activity period is already closed"),
     REPORT_NOT_FOUND("Report not found with id %d"),
+    ONLY_VOLUNTEERS_CAN_SUGGEST("Only volunteers can suggest activities.");
     ;
 
     public final String label;
