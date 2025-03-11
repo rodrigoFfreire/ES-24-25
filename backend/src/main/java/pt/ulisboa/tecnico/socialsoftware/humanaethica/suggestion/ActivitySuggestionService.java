@@ -1,5 +1,7 @@
-package pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.service;
 
+package pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
@@ -17,16 +19,15 @@ import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMes
 @Service
 public class ActivitySuggestionService {
 
-    private final UserRepository userRepository;
-    private final InstitutionRepository institutionRepository;
-    private final ActivitySuggestionRepository activitySuggestionRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    public ActivitySuggestionService(UserRepository userRepository, InstitutionRepository institutionRepository,
-                                     ActivitySuggestionRepository activitySuggestionRepository) {
-        this.userRepository = userRepository;
-        this.institutionRepository = institutionRepository;
-        this.activitySuggestionRepository = activitySuggestionRepository;
-    }
+    @Autowired
+    private InstitutionRepository institutionRepository;
+
+    @Autowired
+    private ActivitySuggestionRepository activitySuggestionRepository;
+
 
     @Transactional
     public ActivitySuggestionDto createActivitySuggestion(Integer userId, Integer institutionId, ActivitySuggestionDto activitySuggestionDto) {
@@ -41,9 +42,10 @@ public class ActivitySuggestionService {
         Institution institution = institutionRepository.findById(institutionId)
                 .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND, institutionId.toString()));
 
-        ActivitySuggestion suggestion = new ActivitySuggestion(activitySuggestionDto, institution, volunteer);
+
+        ActivitySuggestion suggestion = new ActivitySuggestion(institution, volunteer, activitySuggestionDto);
         activitySuggestionRepository.save(suggestion);
 
-        return new ActivitySuggestionDto(suggestion, false, false);
+        return new ActivitySuggestionDto(false, false, suggestion);
     }
 }

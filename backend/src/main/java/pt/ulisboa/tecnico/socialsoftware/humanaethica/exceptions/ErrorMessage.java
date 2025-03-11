@@ -75,8 +75,12 @@ public enum ErrorMessage {
     REPORT_ACTIVTIY_IS_ALREADY_REPORTED("The activity is already reported"),
     REPORT_AFTER_ACTIVTY_CLOSED("The activity period is already closed"),
     REPORT_NOT_FOUND("Report not found with id %d"),
+    //suggestion
+    ACTIVITY_SUGGESTION_DESCRIPTION_INVALID("ActivitySuggestion description is not valid"),
+    ACTIVITY_SUGGESTION_INVALID_APPLICATION_DEADLINE("Application Deadline must be at least 7 days after suggestion date"),
+    ACTIVITY_SUGGESTION_REPEATED("ActivitySuggestion was already suggested by the same volunteer"),
     ONLY_VOLUNTEERS_CAN_SUGGEST("Only volunteers can suggest activities.");
-    ;
+    
 
     public final String label;
 

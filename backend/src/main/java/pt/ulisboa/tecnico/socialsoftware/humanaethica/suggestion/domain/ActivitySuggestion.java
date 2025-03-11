@@ -139,14 +139,6 @@ public class ActivitySuggestion {
         this.state = state;
     }
 
-    public void validate() {
-
-        if (getState() == State.APPROVED) {
-            throw new HEException(SUGGESTION_ALREADY_APPROVED, this.name);
-        }
-        setState(ActivitySuggestion.State.APPROVED);
-    }
-
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
@@ -157,7 +149,7 @@ public class ActivitySuggestion {
 
     public void setInstitution(Institution institution) {
         this.institution = institution;
-        institution.addSuggestion(this); 
+        institution.addActivitySuggestion(this); 
     }
 
     public Institution getInstitution() {
@@ -166,7 +158,7 @@ public class ActivitySuggestion {
 
     public void setVolunteer(Volunteer volunteer) {
         this.volunteer = volunteer;
-        volunteer.addSuggestion(this); 
+        volunteer.addActivitySuggestion(this); 
     }
 
     public Volunteer getVolunteer() {
@@ -186,14 +178,14 @@ public class ActivitySuggestion {
     }
 
     private void ensureUniqueActivityName() {
-        if (this.volunteer.getSuggestions().stream()
+        if (this.volunteer.getActivitySuggestions().stream()
                 .anyMatch(suggestion -> suggestion != this && suggestion.getName().equalsIgnoreCase(this.name))) {
             throw new HEException(ACTIVITY_SUGGESTION_REPEATED); 
         }
     }
 
     private void ensureValidApplicationDeadline() {
-        if (!this.applicationDeadline.isAfter(this.creationDate.plusDays(7))) {
+        if (this.applicationDeadline.isBefore(this.creationDate.plusDays(7))) {
             throw new HEException(ACTIVITY_SUGGESTION_INVALID_APPLICATION_DEADLINE);
         }
     }

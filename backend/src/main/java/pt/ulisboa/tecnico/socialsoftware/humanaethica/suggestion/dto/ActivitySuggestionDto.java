@@ -36,7 +36,7 @@ public class ActivitySuggestionDto {
         setApplicationDeadline(DateHandler.toISOString(activitySuggestion.getApplicationDeadline()));
 
         if (deepCopyInstitution && activitySuggestion.getInstitution() != null) {
-            setInstitution(new InstitutionDto(activitySuggestion.getInstitution(), false, false));
+            setInstitution(new InstitutionDto(activitySuggestion.getInstitution(), false, false, false));
         }
 
         if (deepCopyVolunteer && activitySuggestion.getVolunteer() != null) {

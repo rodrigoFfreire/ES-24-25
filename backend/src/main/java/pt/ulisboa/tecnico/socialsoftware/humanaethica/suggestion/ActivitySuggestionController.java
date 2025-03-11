@@ -1,11 +1,12 @@
-package pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.controller;
+
+package pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.dto.ActivitySuggestionDto;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.service.ActivitySuggestionService;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.ActivitySuggestionService;
 
 @RestController
 @RequestMapping("/suggestions")

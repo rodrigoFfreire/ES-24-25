@@ -59,8 +59,8 @@ public class InstitutionDto {
                     .toList();
         }
         if (deepCopySuggestions) {
-            this.suggestionDto = institution.getSuggestions().stream()
-                    .map(suggestion -> new ActivitySuggestionDto(suggestion, false, false))
+            this.suggestionDto = institution.getActivitySuggestions().stream()
+                    .map(suggestion -> new ActivitySuggestionDto(false, false, suggestion))
                     .toList();
         }
     }
@@ -135,11 +135,11 @@ public class InstitutionDto {
         this.activityDto = activityDto;
     }
 
-    public List<ActivitySuggestionDto> getSuggestions() {
+    public List<ActivitySuggestionDto> getActivitySuggestions() {
         return suggestionDto;
     }
 
-    public void setSuggestions(List<ActivitySuggestionDto> suggestionDto) {
+    public void setActivitySuggestions(List<ActivitySuggestionDto> suggestionDto) {
         this.suggestionDto = suggestionDto;
     }
 }
