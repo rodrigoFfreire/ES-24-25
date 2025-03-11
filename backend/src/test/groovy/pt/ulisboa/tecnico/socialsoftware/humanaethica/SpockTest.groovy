@@ -44,6 +44,10 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.ThemeService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.VolunteerProfileRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.Mailer
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.repository.ActivitySuggestionRepository
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.ActivitySuggestionService
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.domain.ActivitySuggestion
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.dto.ActivitySuggestionDto
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -71,6 +75,9 @@ class SpockTest extends Specification {
     public static final LocalDateTime IN_ONE_DAY = DateHandler.now().plusDays(1)
     public static final LocalDateTime IN_TWO_DAYS = DateHandler.now().plusDays(2)
     public static final LocalDateTime IN_THREE_DAYS = DateHandler.now().plusDays(3)
+    public static final LocalDateTime IN_SIX_DAYS = DateHandler.now().plusDays(6)
+    public static final LocalDateTime IN_SEVEN_DAYS = DateHandler.now().plusDays(7).plusMinutes(1)
+
 
     // institution
 
@@ -330,6 +337,29 @@ class SpockTest extends Specification {
     @Autowired
     VolunteerProfileRepository volunteerProfileRepository
 
+    // activity suggestion
+
+    @Autowired
+    ActivitySuggestionService activitySuggestionService
+    @Autowired
+    ActivitySuggestionRepository activitySuggestionRepository
+
+    def createActivitySuggestion(institution, volunteer) {
+        def activitySuggestionDto = new ActivitySuggestionDto()
+        activitySuggestionDto.setName(name)
+        activitySuggestionDto.setRegion(region)
+        activitySuggestionDto.setParticipantsNumberLimit(number)
+        activitySuggestionDto.setDescription(description)
+        activitySuggestionDto.setStartingDate(DateHandler.toISOString(start))
+        activitySuggestionDto.setEndingDate(DateHandler.toISOString(end))
+        activitySuggestionDto.setApplicationDeadline(DateHandler.toISOString(deadline))
+
+        def suggestion = new ActivitySuggestion(institution, volunteer, activitySuggestionDto)
+        activitySuggestionRepository.save(suggestion)
+        return suggestion
+    }
+
+
     // clean database
 
     def deleteAll() {
@@ -343,6 +373,7 @@ class SpockTest extends Specification {
         userRepository.deleteAll()
         institutionRepository.deleteAll()
         themeRepository.deleteAll()
+        activitySuggestionRepository.deleteAll()
 
     }
 
