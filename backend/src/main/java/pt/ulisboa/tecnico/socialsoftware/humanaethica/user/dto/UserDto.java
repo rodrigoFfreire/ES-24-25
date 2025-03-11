@@ -4,8 +4,12 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User.Role;
+import pt.ulisboa.tecnico.socialsoftware.hasDocument.user.domain.Volunteer;
+import pt.ulisboa.tecnico.socialsoftware.hasDocument.user.domain.Volunteer.Role;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.dto.ActivitySuggestionDto;
+
+import java.util.List;
 
 public class UserDto {
     private Integer id;

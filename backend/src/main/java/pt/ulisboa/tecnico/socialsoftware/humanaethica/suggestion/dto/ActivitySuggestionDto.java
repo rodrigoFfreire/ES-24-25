@@ -2,7 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.domain.ActivitySuggestion;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.dto.InstitutionDto;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.volunteer.dto.VolunteerDto;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.dto.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
 
 public class ActivitySuggestionDto {
@@ -17,7 +17,7 @@ public class ActivitySuggestionDto {
     private String creationDate;
     private String state;
     private InstitutionDto institution;
-    private VolunteerDto volunteer;
+    private UserDto volunteer;
 
     public ActivitySuggestionDto() {
     }
@@ -40,7 +40,7 @@ public class ActivitySuggestionDto {
         }
 
         if (deepCopyVolunteer && activitySuggestion.getVolunteer() != null) {
-            setVolunteer(new VolunteerDto(activitySuggestion.getVolunteer(), false));
+            setVolunteer(new UserDto(activitySuggestion.getVolunteer()));
         }
     }
 
@@ -132,11 +132,11 @@ public class ActivitySuggestionDto {
         this.institution = institution;
     }
 
-    public VolunteerDto getVolunteer() {
+    public UserDto getVolunteer() {
         return volunteer;
     }
 
-    public void setVolunteer(VolunteerDto volunteer) {
+    public void setVolunteer(UserDto volunteer) {
         this.volunteer = volunteer;
     }
 
