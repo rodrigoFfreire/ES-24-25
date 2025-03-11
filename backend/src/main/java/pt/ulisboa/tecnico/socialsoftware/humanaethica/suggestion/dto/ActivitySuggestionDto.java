@@ -22,7 +22,7 @@ public class ActivitySuggestionDto {
     public ActivitySuggestionDto() {
     }
 
-    public ActivitySuggestionDto(ActivitySuggestion activitySuggestion, boolean deepCopyInstitution, boolean deepCopyVolunteer) {
+    public ActivitySuggestionDto(boolean deepCopyInstitution, boolean deepCopyVolunteer, ActivitySuggestion activitySuggestion) {
         setId(activitySuggestion.getId());
         setName(activitySuggestion.getName());
         setRegion(activitySuggestion.getRegion());

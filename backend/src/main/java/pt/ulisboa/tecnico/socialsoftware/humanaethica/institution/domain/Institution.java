@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain;
 import jakarta.persistence.*;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain.Activity;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.domain.ActivitySuggestion;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.domain.Theme;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member;
@@ -47,7 +48,7 @@ public class Institution {
     private List<Activity> activities = new ArrayList<>();
 
     @OneToMany(mappedBy = "institution")
-    private List<Suggestion> suggestions = new ArrayList<>();
+    private List<ActivitySuggestion> suggestions = new ArrayList<>();
 
     @OneToMany(mappedBy = "institution" )
     private List<Assessment> assessments = new ArrayList<>();
@@ -194,11 +195,11 @@ public class Institution {
         this.assessments.remove(assessment);
     }
 
-    public List<Suggestion> getSuggestions() {
+    public List<ActivitySuggestion> getActivitySuggestions() {
         return suggestions;
     }
 
-    public void addSuggestions(Suggestion suggestion) {
+    public void addActivitySuggestion(ActivitySuggestion suggestion) {
         this.suggestions.add(suggestion);
     }
     

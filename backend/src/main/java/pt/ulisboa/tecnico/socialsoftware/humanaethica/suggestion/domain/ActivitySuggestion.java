@@ -1,13 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.domain;
 
 import jakarta.persistence.*;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto.ActivityDto;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.domain.Enrollment;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.report.domain.Report;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.dto.ActivitySuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Participation;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.domain.Theme;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
 
 import java.time.LocalDateTime;
@@ -18,9 +15,7 @@ import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMes
 
 @Entity
 @Table(name = "suggestion")
-public class activitySuggestion {
-    private static final int MIN_JUSTIFICATION_SIZE = 10;
-    private static final int MAX_JUSTIFICATION_SIZE = 250;
+public class ActivitySuggestion {
 
     public enum State {IN_REVIEW, APPROVED, REJECTED}
 
@@ -35,7 +30,7 @@ public class activitySuggestion {
     private LocalDateTime endingDate;
     private Integer participantsNumberLimit;
     @Enumerated(EnumType.STRING)
-    private activitySuggestion.State state = activitySuggestion.State.IN_REVIEW;
+    private ActivitySuggestion.State state = ActivitySuggestion.State.IN_REVIEW;
     @ManyToOne
     private Institution institution;
     @ManyToOne
@@ -44,10 +39,10 @@ public class activitySuggestion {
     private LocalDateTime creationDate;
     
 
-    public activitySuggestion() {
+    public ActivitySuggestion() {
     }
 
-    public activitySuggestion(activitySuggestionDto activitysuggestionDto, Institution institution, Volunteer volunteer) {
+    public ActivitySuggestion(Institution institution, Volunteer volunteer, ActivitySuggestionDto activitysuggestionDto) {
         setInstitution(institution);
         setVolunteer(volunteer);
         setName(activitysuggestionDto.getName());
@@ -62,7 +57,7 @@ public class activitySuggestion {
         verifyInvariants();
     }
 
-    public void update(activitySuggestionDto activitysuggestionDto) {
+    public void update(ActivitySuggestionDto activitysuggestionDto) {
         setName(activitysuggestionDto.getName());
         setRegion(activitysuggestionDto.getRegion());
         setParticipantsNumberLimit(activitysuggestionDto.getParticipantsNumberLimit());
@@ -136,11 +131,11 @@ public class activitySuggestion {
         this.applicationDeadline = applicationDeadline;
     }
 
-    public activitySuggestion.State getState() {
+    public ActivitySuggestion.State getState() {
         return state;
     }
 
-    public void setState(activitySuggestion.State state) {
+    public void setState(ActivitySuggestion.State state) {
         this.state = state;
     }
 
@@ -149,7 +144,7 @@ public class activitySuggestion {
         if (getState() == State.APPROVED) {
             throw new HEException(SUGGESTION_ALREADY_APPROVED, this.name);
         }
-        setState(activitySuggestion.State.APPROVED);
+        setState(ActivitySuggestion.State.APPROVED);
     }
 
     public LocalDateTime getCreationDate() {
@@ -171,7 +166,7 @@ public class activitySuggestion {
 
     public void setVolunteer(Volunteer volunteer) {
         this.volunteer = volunteer;
-        volunteer.addSuggestion(this); //TODO ADD ON Volunteer
+        volunteer.addSuggestion(this); 
     }
 
     public Volunteer getVolunteer() {
