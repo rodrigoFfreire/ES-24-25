@@ -12,7 +12,10 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.dto.ActivitySug
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.repository.ActivitySuggestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.UserRepository;
+import java.util.List;
+import java.util.Comparator;
 
 import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
 
