@@ -14,7 +14,6 @@ public enum ErrorMessage {
     AUTHUSER_NOT_FOUND("AuthUser not found with id %d"),
     USER_NOT_FOUND("User not found with username %s"),
     INSTITUTION_NOT_FOUND("Institution not found with id %d"),
-    INSTITUTION_PROFILE_ALREADY_EXISTS("Institution profile with id %d already exists"),
     USER_NOT_APPROVED("The member of this institution is not yet approved"),
     USER_ALREADY_ACTIVE("User is already active with username %s"),
     INVALID_CONFIRMATION_TOKEN("Invalid confirmation token"),

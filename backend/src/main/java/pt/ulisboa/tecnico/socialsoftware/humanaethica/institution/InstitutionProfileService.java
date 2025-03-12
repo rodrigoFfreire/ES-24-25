@@ -33,32 +33,4 @@ public class InstitutionProfileService {
 
         return new InstitutionProfileDto(institutionProfile);
     }
-
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public InstitutionProfileDto createInstitutionProfile(Integer institutionId, InstitutionProfileDto institutionProfileDto) {
-        Institution institution = institutionRepository.findById(institutionId)
-                .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND, institutionId));
-
-        if (institutionProfileRepository.findInstitutionProfileById(institutionId).isPresent()) {
-            throw new HEException(INSTITUTION_PROFILE_ALREADY_EXISTS, institutionId);
-        }
-
-        InstitutionProfile institutionProfile = new InstitutionProfile(
-                institution,
-                institutionProfileDto.getShortDescription(),
-                institutionProfileDto.getNumMembers(),
-                institutionProfileDto.getNumActivities(),
-                institutionProfileDto.getNumAssessments(),
-                institutionProfileDto.getNumVolunteers(),
-                institutionProfileDto.getAverageRating()
-        );
-
-        if (institution.getAssessments() != null && !institution.getAssessments().isEmpty()) {
-            institutionProfile.setAssessments(new ArrayList<>(institution.getAssessments()));
-        }
-
-        institutionProfileRepository.save(institutionProfile);
-
-        return new InstitutionProfileDto(institutionProfile);
-    }
 }
