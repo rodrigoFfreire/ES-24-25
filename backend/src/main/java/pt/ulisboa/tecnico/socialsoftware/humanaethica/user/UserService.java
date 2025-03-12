@@ -31,6 +31,8 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.dto.RegisterUserDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.dto.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.UserDocumentRepository;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionProfileRepository;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.InstitutionProfile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,6 +55,9 @@ public class UserService {
 
     @Autowired
     private UserDocumentRepository userDocumentRepository;
+
+    @Autowired
+    InstitutionProfileRepository institutionProfileRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -90,7 +95,9 @@ public class UserService {
         }
 
         Member member = new Member(name, username, email, type, institution, state);
+
         userRepository.save(member);
+        updateInstitutionProfile(institution.getId());
         return member.getAuthUser();
     }
 
@@ -107,8 +114,23 @@ public class UserService {
             authUser.getUser().setDocument(userDocument);
             userDocumentRepository.save(userDocument);
         }
+        if (registerUserDto.getRole().equals(User.Role.MEMBER)) {
+            updateInstitutionProfile(registerUserDto.getInstitutionId());
+        }
 
         return new UserDto(authUser);
+    }
+
+    private void updateInstitutionProfile(Integer institutionId) {
+        InstitutionProfile institutionProfile = institutionProfileRepository.findInstitutionProfileByInstitutionId(institutionId).orElse(null);
+        if (institutionProfile != null) {
+            Institution institution = institutionRepository.findById(institutionId).orElse(null);
+            if (institution != null) {
+                Integer memberCount = institution.getMembers() == null ? 0 : institution.getMembers().size();
+                institutionProfile.setNumMembers(memberCount);
+                institutionProfileRepository.save(institutionProfile);
+            }
+        }
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -163,6 +185,10 @@ public class UserService {
                     registerUserDto.getUsername(), registerUserDto.getEmail(), AuthUser.Type.NORMAL, state);
             default -> throw new HEException(INVALID_ROLE, registerUserDto.getRole().name());
         };
+
+        if (registerUserDto.getRole().equals(User.Role.MEMBER)) {
+            updateInstitutionProfile(registerUserDto.getInstitutionId());
+        }
 
         userRepository.save(user);
 

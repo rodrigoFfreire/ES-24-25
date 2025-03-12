@@ -8,7 +8,9 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessme
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.dto.AssessmentDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.InstitutionProfile;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionProfileRepository;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.UserRepository;
 
@@ -25,6 +27,8 @@ public class AssessmentService {
     private InstitutionRepository institutionRepository;
     @Autowired
     private AssessmentRepository assessmentRepository;
+    @Autowired
+    private InstitutionProfileRepository institutionProfileRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<AssessmentDto> getAssessmentsByInstitution(Integer institutionId) {
@@ -61,6 +65,8 @@ public class AssessmentService {
         Assessment assessment = new Assessment(institution, volunteer, assessmentDto);
         assessmentRepository.save(assessment);
 
+        updateInstitutionProfile(institutionId);
+
         return new AssessmentDto(assessment);
     }
 
@@ -70,6 +76,8 @@ public class AssessmentService {
         Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new HEException(ASSESSMENT_NOT_FOUND));
 
         assessmentRepository.delete(assessment);
+
+        updateInstitutionProfile(assessment.getInstitution().getId());
 
         return new AssessmentDto(assessment);
     }
@@ -82,5 +90,14 @@ public class AssessmentService {
         assessment.update(assessmentDto);
 
         return new AssessmentDto(assessment);
+    }
+
+    private void updateInstitutionProfile(Integer institutionId) {
+        InstitutionProfile institutionProfile = institutionProfileRepository.findInstitutionProfileByInstitutionId(institutionId).orElse(null);
+        if (institutionProfile != null) {
+            Integer assessmentCount = assessmentRepository.countAssessmentsByInstitutionId(institutionId);
+            institutionProfile.setNumAssessments(assessmentCount);
+            institutionProfileRepository.save(institutionProfile);
+        }
     }
 }

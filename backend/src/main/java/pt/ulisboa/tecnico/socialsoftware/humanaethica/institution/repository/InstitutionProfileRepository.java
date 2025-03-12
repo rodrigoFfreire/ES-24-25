@@ -12,5 +12,5 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institu
 @Transactional
 public interface InstitutionProfileRepository extends JpaRepository<InstitutionProfile, Integer> {
     @Query(value = "SELECT * FROM institution_profiles ip WHERE ip.institution_id = :institutionId", nativeQuery = true)
-    Optional<InstitutionProfile> findInstitutionProfileById(Integer institutionId);
+    Optional<InstitutionProfile> findInstitutionProfileByInstitutionId(Integer institutionId);
 }

@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.dto.InstitutionProfileDto;
+
 import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessment;
 
@@ -41,10 +43,11 @@ public class InstitutionProfile {
 
     public InstitutionProfile() {}
 
-    public InstitutionProfile(Institution institution, String shortDescription, int numMembers, 
+    public InstitutionProfile(Institution institution, List<Assessment> assessments, InstitutionProfileDto institutionProfileDto, int numMembers, 
                               int numActivities, int numAssessments, int numVolunteers, float averageRating) {
         setInstitution(institution);
-        setShortDescription(shortDescription);
+        setAssessments(assessments);
+        setShortDescription(institutionProfileDto.getShortDescription());
         setNumMembers(numMembers);
         setNumActivities(numActivities);
         setNumAssessments(numAssessments);

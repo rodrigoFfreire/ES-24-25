@@ -14,6 +14,9 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionProfileRepository;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.InstitutionProfile;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionRepository;
 
 import java.util.Comparator;
 import java.util.List;
@@ -28,6 +31,10 @@ public class ParticipationService {
     private ActivityRepository activityRepository;
     @Autowired
     private ParticipationRepository participationRepository;
+    @Autowired
+    private InstitutionRepository institutionRepository;
+    @Autowired
+    private InstitutionProfileRepository institutionProfileRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<ParticipationDto> getParticipationsByActivity(Integer activityId) {
@@ -66,6 +73,7 @@ public class ParticipationService {
         Participation participation = participationRepository.findById(participationId).orElseThrow(() -> new HEException(PARTICIPATION_NOT_FOUND, participationId));
 
         participation.volunteerRating(participationDto);
+        updateInstitutionProfile(participation.getActivity().getInstitution().getId());
         return new ParticipationDto(participation,  User.Role.VOLUNTEER);
     }
 
@@ -85,9 +93,30 @@ public class ParticipationService {
         Participation participation = new Participation(activity, volunteer, participationDto);
         participationRepository.save(participation);
 
+        updateInstitutionProfile(activity.getInstitution().getId());
+
         return new ParticipationDto(participation, User.Role.MEMBER);
     }
 
+    private void updateInstitutionProfile(Integer institutionId) {
+        InstitutionProfile institutionProfile = institutionProfileRepository.findInstitutionProfileByInstitutionId(institutionId).orElse(null);
+        if (institutionProfile != null) {
+            Integer volunteerCount = userRepository.countUniqueVolunteersByInstitution(institutionId);
+            List<Participation> participations = participationRepository.getParticipationsByInstitutionId(institutionId);
+            Integer ratingSum = 0;
+            float avgRating = 0;
+            if (participations.size() > 0) {
+                for (Participation participation : participations) {
+                    ratingSum += participation.getVolunteerRating();
+                }
+                avgRating = (float) ratingSum / (float) participations.size();
+            }
+
+            institutionProfile.setNumVolunteers(volunteerCount);
+            institutionProfile.setAverageRating(avgRating);
+            institutionProfileRepository.save(institutionProfile);
+        }
+    }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ParticipationDto deleteParticipation(Integer participationId) {
@@ -97,6 +126,8 @@ public class ParticipationService {
 
         participation.delete();
         participationRepository.delete(participation);
+
+        updateInstitutionProfile(participation.getActivity().getInstitution().getId());
         return new ParticipationDto(participation,  User.Role.VOLUNTEER);
     }
 }
