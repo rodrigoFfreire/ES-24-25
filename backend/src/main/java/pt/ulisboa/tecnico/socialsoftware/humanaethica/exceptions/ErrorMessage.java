@@ -79,8 +79,9 @@ public enum ErrorMessage {
     ACTIVITY_SUGGESTION_DESCRIPTION_INVALID("ActivitySuggestion description is not valid"),
     ACTIVITY_SUGGESTION_INVALID_APPLICATION_DEADLINE("Application Deadline must be at least 7 days after suggestion date"),
     ACTIVITY_SUGGESTION_REPEATED("ActivitySuggestion was already suggested by the same volunteer"),
+    ONLY_INSTITUTION_MEMBERS_CAN_GET_SUGGESTIONS("Only institution members can obtain the institution's suggested activities"),
     ONLY_VOLUNTEERS_CAN_SUGGEST("Only volunteers can suggest activities."),
-    INVALID_ACTIVITY_SUGGESTION_DTO("Invalid activity suggestion submission.");
+    INVALID_ACTIVITY_SUGGESTION_DTO("Invalid ActivitySuggestionDto.");
     
 
     public final String label;

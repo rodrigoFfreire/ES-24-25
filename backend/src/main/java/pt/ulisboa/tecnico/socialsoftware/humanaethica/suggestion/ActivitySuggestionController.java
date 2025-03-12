@@ -34,4 +34,12 @@ public class ActivitySuggestionController {
 
         return activitySuggestionService.createActivitySuggestion(userId, institutionId, activitySuggestionDto);
     }
+
+
+    @GetMapping("/{institutionId}/suggestions")
+    @PreAuthorize("(hasRole('ROLE_MEMBER'))")
+    public List<ActivitySuggestionDto> getInstitutionActivitySuggestions(@PathVariable Integer institutionId) {
+        int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
+        return enrollmentService.getInstitutionsActivitySuggestions(userId, institutionId);
+    }
 }

@@ -55,4 +55,23 @@ public class ActivitySuggestionService {
 
         return new ActivitySuggestionDto(true, true, suggestion);
     }
+
+    @Transactional
+    public List<ActivitySuggestionDto> getInstitutionActivitySuggestions(Integer userId, Integer institutionId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new HEException(USER_NOT_FOUND, userId.toString()));
+
+        if (!(user instanceof Member) || member.getInstitution().getId() != institution.getId()) {
+            throw new HEException(ONLY_INSTITUTION_MEMBERS_CAN_GET_SUGGESTIONS);
+        }
+        Member member = (Member) user;
+
+        Institution institution = institutionRepository.findById(institutionId)
+                .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND, institutionId.toString()));
+
+        return activitySuggestionRepository.getActivitySuggestionsByInstitutionId(institutionId).stream()
+                .sorted(Comparator.comparing(ActivitySuggestion::getCreationDate))
+                .map(ActivitySuggestionDto::new)
+                .toList();
+    }
 }
