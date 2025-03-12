@@ -367,6 +367,7 @@ class SpockTest extends Specification {
 
 
 
+
     // clean database
 
     def deleteAll() {

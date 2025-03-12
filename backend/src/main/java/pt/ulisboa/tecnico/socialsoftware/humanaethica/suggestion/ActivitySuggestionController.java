@@ -38,8 +38,8 @@ public class ActivitySuggestionController {
 
     @GetMapping("/{institutionId}/suggestions")
     @PreAuthorize("(hasRole('ROLE_MEMBER'))")
-    public List<ActivitySuggestionDto> getInstitutionActivitySuggestions(@PathVariable Integer institutionId) {
+    public List<ActivitySuggestionDto> getInstitutionActivitySuggestions(Principal principal, @PathVariable Integer institutionId) {
         int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
-        return enrollmentService.getInstitutionsActivitySuggestions(userId, institutionId);
+        return activitySuggestionService.getInstitutionActivitySuggestions(userId, institutionId);
     }
 }

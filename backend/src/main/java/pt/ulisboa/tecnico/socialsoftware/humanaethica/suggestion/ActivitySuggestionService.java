@@ -61,17 +61,21 @@ public class ActivitySuggestionService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new HEException(USER_NOT_FOUND, userId.toString()));
 
-        if (!(user instanceof Member) || member.getInstitution().getId() != institution.getId()) {
+        if (!(user instanceof Member)) {
             throw new HEException(ONLY_INSTITUTION_MEMBERS_CAN_GET_SUGGESTIONS);
         }
         Member member = (Member) user;
+
+        if (member.getInstitution().getId() != institutionId){
+            throw new HEException(ONLY_INSTITUTION_MEMBERS_CAN_GET_SUGGESTIONS);
+        }
 
         Institution institution = institutionRepository.findById(institutionId)
                 .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND, institutionId.toString()));
 
         return activitySuggestionRepository.getActivitySuggestionsByInstitutionId(institutionId).stream()
                 .sorted(Comparator.comparing(ActivitySuggestion::getCreationDate))
-                .map(ActivitySuggestionDto::new)
+                .map(activitySuggestion -> new ActivitySuggestionDto(false, false, activitySuggestion))
                 .toList();
     }
 }
