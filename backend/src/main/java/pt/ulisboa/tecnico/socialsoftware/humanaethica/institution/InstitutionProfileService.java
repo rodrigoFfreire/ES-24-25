@@ -44,48 +44,28 @@ public class InstitutionProfileService {
     private InstitutionProfileRepository institutionProfileRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public InstitutionProfileDto createInstitutionProfile(Integer institutionId, List<Integer> assessmentIds, InstitutionProfileDto institutionProfileDto) {
+    public InstitutionProfileDto createInstitutionProfile(Integer institutionId, InstitutionProfileDto institutionProfileDto) {
         Institution institution = institutionRepository.findById(institutionId)
                 .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND, institutionId));
-        
-        List<Assessment> assessments = new ArrayList<>();
-        for (Integer assessmentId : assessmentIds) {
-            Assessment assessment = assessmentRepository.findById(assessmentId)
-                    .orElseThrow(() -> new HEException(ASSESSMENT_NOT_FOUND, assessmentId));
-            assessments.add(assessment);
-        }
 
         if (institutionProfileRepository.findInstitutionProfileByInstitutionId(institutionId).isPresent()) {
             throw new HEException(INSTITUTION_PROFILE_ALREADY_EXISTS, institutionId);
         }
 
-        Integer memberCount = institution.getMembers() == null ? 0 : institution.getMembers().size();
-        Integer assessmentsCount = assessmentRepository.countAssessmentsByInstitutionId(institutionId);
-        List<Participation> participations = participationRepository.getParticipationsByInstitutionId(institutionId);
+        institutionProfileDto.setNumMembers(institution.getMembers() == null ? 0 : institution.getMembers().size());
+        institutionProfileDto.setNumAssessments(assessmentRepository.countAssessmentsByInstitutionId(institutionId));
+        institutionProfileDto.setNumActivities(activityRepository.countActivitiesByInstitutionId(institutionId));
+        institutionProfileDto.setNumVolunteers(userRepository.countUniqueVolunteersByInstitution(institutionId));
 
-        
-        Integer ratingSum = 0;
-        float avgRating = 0;
-        if (participations.size() > 0) {
-            for (Participation participation : participations) {
-                ratingSum += participation.getVolunteerRating();
-            }
-            avgRating = (float) ratingSum / (float) participations.size();
+        List<Participation> participations = participationRepository.getParticipationsByInstitutionId(institutionId);
+        if (!participations.isEmpty()) {
+            int ratingSum = participations.stream().mapToInt(Participation::getVolunteerRating).sum();
+            institutionProfileDto.setAverageRating((float) ratingSum / participations.size());
+        } else {
+            institutionProfileDto.setAverageRating(0);
         }
 
-        Integer activityCount = activityRepository.countActivitiesByInstitutionId(institutionId);
-        Integer volunteerCount = userRepository.countUniqueVolunteersByInstitution(institutionId);
-
-        InstitutionProfile institutionProfile = new InstitutionProfile(
-                institution,
-                assessments,
-                institutionProfileDto,
-                memberCount,
-                activityCount,
-                assessmentsCount,
-                volunteerCount,
-                avgRating
-        );
+        InstitutionProfile institutionProfile = new InstitutionProfile(institution, institutionProfileDto);
 
         institutionProfileRepository.save(institutionProfile);
 

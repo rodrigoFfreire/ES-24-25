@@ -19,8 +19,7 @@ public class InstitutionProfileController {
     @PreAuthorize("hasRole('ROLE_MEMBER') and @securityService.isMemberOfInstitution(authentication, #institutionId)")
     public InstitutionProfileDto createInstitutionProfile(
             @PathVariable Integer institutionId,
-            @PathVariable List<Integer> activityIds,
             @RequestBody InstitutionProfileDto institutionProfileDto) {
-        return institutionProfileService.createInstitutionProfile(institutionId, activityIds, institutionProfileDto);
+        return institutionProfileService.createInstitutionProfile(institutionId, institutionProfileDto);
     }
 }

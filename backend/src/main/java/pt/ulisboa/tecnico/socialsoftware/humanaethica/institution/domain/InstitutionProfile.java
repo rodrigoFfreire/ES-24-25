@@ -43,19 +43,19 @@ public class InstitutionProfile {
 
     public InstitutionProfile() {}
 
-    public InstitutionProfile(Institution institution, List<Assessment> assessments, InstitutionProfileDto institutionProfileDto, int numMembers, 
-                              int numActivities, int numAssessments, int numVolunteers, float averageRating) {
+    public InstitutionProfile(Institution institution, InstitutionProfileDto institutionProfileDto) {
         setInstitution(institution);
-        setAssessments(assessments);
         setShortDescription(institutionProfileDto.getShortDescription());
-        setNumMembers(numMembers);
-        setNumActivities(numActivities);
-        setNumAssessments(numAssessments);
-        setNumVolunteers(numVolunteers);
-        setAverageRating(averageRating);
+        setNumMembers(institutionProfileDto.getNumMembers());
+        setNumActivities(institution.getActivities().size());
+        setNumAssessments(institutionProfileDto.getNumAssessments());
+        setNumVolunteers(institutionProfileDto.getNumVolunteers());
+        setAverageRating(institutionProfileDto.getAverageRating());
+        setAssessments(new ArrayList<>(institution.getAssessments()));
 
         verifyInvariants();
     }
+
     public void verifyInvariants() {
         verifyDescriptionLength();
         verifyRecentAssessments();
