@@ -47,7 +47,7 @@ public class Institution {
     @OneToMany(mappedBy = "institution", orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Activity> activities = new ArrayList<>();
 
-    @OneToMany(mappedBy = "institution")
+    @OneToMany(mappedBy = "institution", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ActivitySuggestion> suggestions = new ArrayList<>();
 
     @OneToMany(mappedBy = "institution" )

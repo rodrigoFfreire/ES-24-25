@@ -24,6 +24,7 @@ public class ActivitySuggestionController {
 
     @PostMapping("/{institutionId}")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("(hasRole('ROLE_VOLUNTEER'))")
     public ActivitySuggestionDto createActivitySuggestion(
             Principal principal,
             @PathVariable Integer institutionId,

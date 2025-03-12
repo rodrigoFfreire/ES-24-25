@@ -13,4 +13,8 @@ import java.util.Set;
 @Repository
 @Transactional
 public interface ActivitySuggestionRepository extends JpaRepository<ActivitySuggestion, Integer> {
+    
+    @Query("SELECT s FROM ActivitySuggestion s WHERE s.institution.id = :institutionId")
+    List<ActivitySuggestion> getActivitySuggestionsByInstitutionId(Integer institutionId);
+
 }

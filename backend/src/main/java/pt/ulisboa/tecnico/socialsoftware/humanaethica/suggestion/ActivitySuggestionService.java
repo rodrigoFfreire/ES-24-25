@@ -34,6 +34,10 @@ public class ActivitySuggestionService {
 
     @Transactional
     public ActivitySuggestionDto createActivitySuggestion(Integer userId, Integer institutionId, ActivitySuggestionDto activitySuggestionDto) {
+        if (activitySuggestionDto == null) throw new HEException(INVALID_ACTIVITY_SUGGESTION_DTO);
+        if (userId == null) throw new HEException(USER_NOT_FOUND);
+        if (institutionId == null) throw new HEException(INSTITUTION_NOT_FOUND);
+        
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new HEException(USER_NOT_FOUND, userId.toString()));
 
@@ -43,12 +47,12 @@ public class ActivitySuggestionService {
         Volunteer volunteer = (Volunteer) user;
 
         Institution institution = institutionRepository.findById(institutionId)
-                .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND, institutionId.toString()));
+                .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND));
 
 
         ActivitySuggestion suggestion = new ActivitySuggestion(institution, volunteer, activitySuggestionDto);
         activitySuggestionRepository.save(suggestion);
 
-        return new ActivitySuggestionDto(false, false, suggestion);
+        return new ActivitySuggestionDto(true, true, suggestion);
     }
 }
