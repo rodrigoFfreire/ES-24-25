@@ -339,25 +339,32 @@ class SpockTest extends Specification {
 
     // activity suggestion
 
+    public static final String SUGGESTION_NAME_1 = "suggestion name 1"
+    public static final String SUGGESTION_NAME_2 = "suggestion name 2"
+    public static final String SUGGESTION_REGION_1 = "suggestion region 1"
+    public static final String SUGGESTION_REGION_2 = "suggestion region 2"
+    public static final String SUGGESTION_DESCRIPTION_1 = "suggestion description 1"
+    public static final String SUGGESTION_DESCRIPTION_2 = "suggestion description 2"
+    public static final int SUGGESTION_PARTICIPANTS_LIMIT_1 = 5
+
     @Autowired
     ActivitySuggestionService activitySuggestionService
     @Autowired
     ActivitySuggestionRepository activitySuggestionRepository
 
-    def createActivitySuggestion(institution, volunteer) {
+    def createActivitySuggestionDto(name, region, number, description, startingDate, endingDate, applicationDeadline, state) {
         def activitySuggestionDto = new ActivitySuggestionDto()
         activitySuggestionDto.setName(name)
         activitySuggestionDto.setRegion(region)
         activitySuggestionDto.setParticipantsNumberLimit(number)
         activitySuggestionDto.setDescription(description)
-        activitySuggestionDto.setStartingDate(DateHandler.toISOString(start))
-        activitySuggestionDto.setEndingDate(DateHandler.toISOString(end))
-        activitySuggestionDto.setApplicationDeadline(DateHandler.toISOString(deadline))
-
-        def suggestion = new ActivitySuggestion(institution, volunteer, activitySuggestionDto)
-        activitySuggestionRepository.save(suggestion)
-        return suggestion
+        activitySuggestionDto.setStartingDate(DateHandler.toISOString(startingDate))
+        activitySuggestionDto.setEndingDate(DateHandler.toISOString(endingDate))
+        activitySuggestionDto.setApplicationDeadline(DateHandler.toISOString(applicationDeadline))
+        activitySuggestionDto.setState(state)
+        return activitySuggestionDto
     }
+
 
 
     // clean database
