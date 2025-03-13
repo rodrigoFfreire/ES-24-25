@@ -30,10 +30,10 @@ class GetVolunteerProfileTest extends SpockTest {
         def activity2 = new Activity(activityDto2, institution, new ArrayList<>())
 
         def partDto1 = new ParticipationDto()
-        partDto1.memberReview = "Positive review"
+        partDto1.memberReview = MEMBER_REVIEW
         partDto1.memberRating = 4
         def partDto2 = new ParticipationDto()
-        partDto2.memberReview = "Somewhat OK review"
+        partDto2.memberReview = MEMBER_REVIEW
         partDto2.memberRating = 3
 
         // Should have ID 2
