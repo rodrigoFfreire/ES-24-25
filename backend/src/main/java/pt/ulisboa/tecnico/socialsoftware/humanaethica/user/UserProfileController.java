@@ -14,12 +14,15 @@ public class UserProfileController {
     @Autowired
     private UserProfileService userProfileService;
 
-    // TODO Implement createVolunteerProfile Controller
-
     @PostMapping("/users/{volunteerId}/profile")
     @PreAuthorize("(hasRole('ROLE_VOLUNTEER'))")
     public VolunteerProfileDto createVolunteerProfile(Principal principal, @PathVariable Integer volunteerId, @Valid @RequestBody VolunteerProfileDto volunteerProfileDto) {
         int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
         return userProfileService.createVolunteerProfile(volunteerId, volunteerProfileDto);
+    }
+
+    @GetMapping("/users/{volunteerId}/profile")
+    public VolunteerProfileDto getVolunteerProfile(@PathVariable Integer volunteerId) {
+        return userProfileService.getVolunteerProfile(volunteerId);
     }
 }
