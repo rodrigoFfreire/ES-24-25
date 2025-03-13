@@ -24,7 +24,7 @@ public class VolunteerProfile {
     @JoinColumn(name = "volunteer_id")
     private Volunteer volunteer;
 
-    @OneToMany(mappedBy = "volunteerProfile", orphanRemoval = true, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "volunteerProfile", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Participation> chosenParticipations = new ArrayList<>();
 
     private String shortBio;

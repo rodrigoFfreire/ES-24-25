@@ -1,15 +1,18 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.user.webservice
 
+import org.hibernate.Hibernate
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.reactive.function.client.WebClient
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain.Activity
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.dto.ParticipationDto
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.VolunteerProfile
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.dto.VolunteerProfileDto
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -52,11 +55,8 @@ class GetVolunteerProfileWebServiceIT extends SpockTest {
         profileDto.setVolunteerShortBio(VOLUNTEER_PROFILE_EXAMPLE_BIO)
         profileDto.setChosenParticipations(new ArrayList<ParticipationDto>([new ParticipationDto(part1, User.Role.MEMBER)]));
 
-        userProfileService.createVolunteerProfile(volunteer.getId(), profileDto)
-
-        // Creating the profile like this causes a "detached entity passed to persist error".
-        // def profile = new VolunteerProfile(volunteer, profileDto)
-        // volunteerProfileRepository.save(profile);
+        def profile = new VolunteerProfile(volunteer, profileDto)
+        userRepository.save(volunteer)
     }
 
     def "get a volunteer's profile as non auth'd user"() {
