@@ -50,6 +50,30 @@ class GetActivitySuggestionServiceTest extends SpockTest {
         result.get(0).name == SUGGESTION_NAME_1
     }
 
+    def "error: admin gets suggestions"() {
+        given:
+        def admin = demoService.getDemoAdmin()
+
+        when:
+        activitySuggestionService.getInstitutionActivitySuggestions(admin.id, institution.id)
+
+        then:
+        def error = thrown(HEException)
+        error.getErrorMessage() == ErrorMessage.ONLY_INSTITUTION_MEMBERS_CAN_GET_SUGGESTIONS
+    }
+
+    def "error: volunteer gets suggestions"() {
+        given:
+        def volunteer = authUserService.loginDemoVolunteerAuth().getUser()
+
+        when:
+        activitySuggestionService.getInstitutionActivitySuggestions(volunteer.id, institution.id)
+
+        then:
+        def error = thrown(HEException)
+        error.getErrorMessage() == ErrorMessage.ONLY_INSTITUTION_MEMBERS_CAN_GET_SUGGESTIONS
+    }
+
     @Unroll
     def "invalid get: memberId=#memberId | institutionId=#institutionId"() {
         when:

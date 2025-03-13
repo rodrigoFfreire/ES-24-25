@@ -72,6 +72,9 @@ class GetActivitySuggestionWebServiceIT extends SpockTest {
         DateHandler.toLocalDateTime(response.get(0).endingDate).truncatedTo(ChronoUnit.MICROS) == IN_TWO_DAYS.truncatedTo(ChronoUnit.MICROS)
         DateHandler.toLocalDateTime(response.get(0).applicationDeadline).truncatedTo(ChronoUnit.MICROS) == IN_SEVEN_DAYS.truncatedTo(ChronoUnit.MICROS)
         response.get(0).state == "IN_REVIEW"
+
+        cleanup:
+        deleteAll()
     }
 
     def "volunteer cannot get suggestions"() {
@@ -89,9 +92,32 @@ class GetActivitySuggestionWebServiceIT extends SpockTest {
         then:
         def error = thrown(WebClientResponseException)
         error.statusCode == HttpStatus.FORBIDDEN
+
+        cleanup:
+        deleteAll()
     }
 
-    def "non-authenticated user cannot get suggestions"() {
+    def "admin cannot get suggestion"() {
+        given:
+        demoAdminLogin()
+        
+        when:
+        webClient.get()
+                .uri("/suggestions/" +institution.id + "/suggestions")
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(ActivitySuggestionDto.class)
+                .block()
+
+        then:
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
+
+        cleanup:
+        deleteAll()
+    }
+    
+    def "non-authenticated user cannot get suggestion"() {
         given:
         headers.remove(HttpHeaders.AUTHORIZATION)
 
@@ -106,5 +132,28 @@ class GetActivitySuggestionWebServiceIT extends SpockTest {
         then:
         def error = thrown(WebClientResponseException)
         error.statusCode == HttpStatus.FORBIDDEN
+
+        cleanup:
+        deleteAll()
+    }
+
+    def "member gets a suggestion that doesnt exist"() {
+        given:
+        demoMemberLogin()
+
+        when:
+        webClient.get()
+                .uri("/suggestions/" + institution.id + "/suggestions/999") // 999 should be an invalid suggestion ID
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(ActivitySuggestionDto.class)
+                .block()
+
+        then:
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.NOT_FOUND
+
+        cleanup:
+        deleteAll()
     }
 }
