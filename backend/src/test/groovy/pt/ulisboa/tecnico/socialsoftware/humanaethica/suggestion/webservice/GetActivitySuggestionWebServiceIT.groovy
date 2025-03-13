@@ -11,16 +11,19 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.dto.ActivitySuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.domain.ActivitySuggestion
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler
+import java.time.temporal.ChronoUnit
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class GetActivitySuggestionsWebServiceIT extends SpockTest {
+class GetActivitySuggestionWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
     private def institution
-    private def member
+    private def volunteer
 
     def setup() {
         deleteAll()
@@ -30,29 +33,29 @@ class GetActivitySuggestionsWebServiceIT extends SpockTest {
         headers.setContentType(MediaType.APPLICATION_JSON)
 
         institution = institutionService.getDemoInstitution()
-        member = createMember(USER_1_NAME, USER_1_USERNAME, USER_1_PASSWORD, USER_1_EMAIL, AuthUser.Type.DEMO, institution, User.State.APPROVED)
+        volunteer = createVolunteer(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, AuthUser.Type.DEMO, User.State.APPROVED)
 
         def suggestionDto = createActivitySuggestionDto(
             SUGGESTION_NAME_1,
             SUGGESTION_REGION_1,
             SUGGESTION_PARTICIPANTS_LIMIT_1,
             SUGGESTION_DESCRIPTION_1,
-            NOW,
-            IN_TWO_DAYS,
-            IN_SEVEN_DAYS,
+            NOW.truncatedTo(ChronoUnit.MICROS),
+            IN_TWO_DAYS.truncatedTo(ChronoUnit.MICROS),
+            IN_SEVEN_DAYS.truncatedTo(ChronoUnit.MICROS),
             ActivitySuggestion.State.IN_REVIEW
         )
-        activitySuggestionRepository.save(suggestionDto.toEntity(institution, member))
+        def suggestion = new ActivitySuggestion(institution, volunteer, suggestionDto)
+        activitySuggestionRepository.save(suggestion)    
     }
 
     def "get suggestions as member"() {
         given:
-        def authDto = demoMemberLogin()
-        headers.setBearerAuth(authDto.getToken())
+        demoMemberLogin()
 
         when:
         def response = webClient.get()
-                .uri("/suggestions/${institution.id}")
+                .uri("/suggestions/" + institution.id + "/suggestions")
                 .headers(httpHeaders -> httpHeaders.putAll(headers))
                 .retrieve()
                 .bodyToFlux(ActivitySuggestionDto.class)
@@ -62,16 +65,22 @@ class GetActivitySuggestionsWebServiceIT extends SpockTest {
         then:
         response.size() == 1
         response.get(0).name == SUGGESTION_NAME_1
+        response.get(0).region == SUGGESTION_REGION_1
+        response.get(0).description == SUGGESTION_DESCRIPTION_1
+        response.get(0).participantsNumberLimit == SUGGESTION_PARTICIPANTS_LIMIT_1
+        DateHandler.toLocalDateTime(response.get(0).startingDate).truncatedTo(ChronoUnit.MICROS) == NOW.truncatedTo(ChronoUnit.MICROS)
+        DateHandler.toLocalDateTime(response.get(0).endingDate).truncatedTo(ChronoUnit.MICROS) == IN_TWO_DAYS.truncatedTo(ChronoUnit.MICROS)
+        DateHandler.toLocalDateTime(response.get(0).applicationDeadline).truncatedTo(ChronoUnit.MICROS) == IN_SEVEN_DAYS.truncatedTo(ChronoUnit.MICROS)
+        response.get(0).state == "IN_REVIEW"
     }
 
     def "volunteer cannot get suggestions"() {
         given:
-        def authDto = demoVolunteerLogin()
-        headers.setBearerAuth(authDto.getToken())
-
+        demoVolunteerLogin()
+        
         when:
         webClient.get()
-                .uri("/suggestions/${institution.id}")
+                .uri("/suggestions/" +institution.id + "/suggestions")
                 .headers(httpHeaders -> httpHeaders.putAll(headers))
                 .retrieve()
                 .bodyToMono(ActivitySuggestionDto.class)
@@ -88,7 +97,7 @@ class GetActivitySuggestionsWebServiceIT extends SpockTest {
 
         when:
         webClient.get()
-                .uri("/suggestions/${institution.id}")
+                .uri("/suggestions/" + institution.id + "/suggestions")
                 .headers(httpHeaders -> httpHeaders.putAll(headers))
                 .retrieve()
                 .bodyToMono(ActivitySuggestionDto.class)

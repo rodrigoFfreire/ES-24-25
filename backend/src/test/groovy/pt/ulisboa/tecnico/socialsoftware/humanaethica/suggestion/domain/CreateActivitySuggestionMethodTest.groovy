@@ -54,6 +54,7 @@ class CreateActivitySuggestionMethodTest extends SpockTest {
         result.getStartingDate() == IN_TWO_DAYS
         result.getEndingDate() == IN_THREE_DAYS
         result.getApplicationDeadline() == IN_SEVEN_DAYS
+        result.getState() == ActivitySuggestion.State.IN_REVIEW
 
         and: "invocations"
         1 * institution.addActivitySuggestion(_)

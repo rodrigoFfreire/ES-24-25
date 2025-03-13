@@ -15,7 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User
 import spock.lang.Unroll
 
 @DataJpaTest
-class GetActivitySuggestionsServiceTest extends SpockTest {
+class GetActivitySuggestionServiceTest extends SpockTest {
 
     public static final String EXIST = 'exist'
     public static final String NO_EXIST = 'noExist'
