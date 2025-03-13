@@ -10,8 +10,10 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.dto.ActivitySuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.domain.ActivitySuggestion
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler
 import java.time.temporal.ChronoUnit
@@ -49,9 +51,12 @@ class GetActivitySuggestionWebServiceIT extends SpockTest {
         activitySuggestionRepository.save(suggestion)    
     }
 
-    def "get suggestions as member"() {
+
+    def "get suggestions as member of institution"() {
         given:
-        demoMemberLogin()
+
+        createMember(USER_3_NAME, USER_3_USERNAME, USER_3_PASSWORD, USER_3_EMAIL, AuthUser.Type.NORMAL, institution, User.State.APPROVED)
+        normalUserLogin(USER_3_USERNAME, USER_3_PASSWORD)
 
         when:
         def response = webClient.get()
@@ -72,6 +77,30 @@ class GetActivitySuggestionWebServiceIT extends SpockTest {
         DateHandler.toLocalDateTime(response.get(0).endingDate).truncatedTo(ChronoUnit.MICROS) == IN_TWO_DAYS.truncatedTo(ChronoUnit.MICROS)
         DateHandler.toLocalDateTime(response.get(0).applicationDeadline).truncatedTo(ChronoUnit.MICROS) == IN_SEVEN_DAYS.truncatedTo(ChronoUnit.MICROS)
         response.get(0).state == "IN_REVIEW"
+
+        cleanup:
+        deleteAll()
+    }
+
+    def "get suggestions as member of another institution"() {
+        given:
+        def otherInstitution = new Institution(INSTITUTION_1_NAME, INSTITUTION_1_EMAIL, INSTITUTION_1_NIF)
+        institutionRepository.save(otherInstitution)
+        createMember(USER_3_NAME, USER_3_USERNAME, USER_3_PASSWORD, USER_3_EMAIL, AuthUser.Type.NORMAL, otherInstitution, User.State.APPROVED)
+        normalUserLogin(USER_3_USERNAME, USER_3_PASSWORD)
+
+        when:
+        def response = webClient.get()
+                .uri("/suggestions/" + institution.id + "/suggestions")
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(ActivitySuggestionDto.class)
+                .collectList()
+                .block()
+
+        then:
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN        
 
         cleanup:
         deleteAll()

@@ -73,9 +73,6 @@ public class ActivitySuggestionService {
         
         Member member = (Member) user;
 
-        if (member.getInstitution().getId() != institutionId){
-            throw new HEException(ONLY_INSTITUTION_MEMBERS_CAN_GET_SUGGESTIONS);
-        }
 
         return activitySuggestionRepository.getActivitySuggestionsByInstitutionId(institutionId).stream()
                 .sorted(Comparator.comparing(ActivitySuggestion::getCreationDate))
