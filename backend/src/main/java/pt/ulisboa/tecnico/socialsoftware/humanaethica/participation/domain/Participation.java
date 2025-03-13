@@ -3,9 +3,9 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain;
 import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.domain.Activity;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.ParticipationService;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.dto.ParticipationDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.VolunteerProfile;
 
 import java.time.LocalDateTime;
 
@@ -23,10 +23,12 @@ public class Participation {
     private String volunteerReview;
     private String memberReview;
 
-
+    @ManyToOne
+    private VolunteerProfile volunteerProfile;
 
     @ManyToOne
     private Activity activity;
+
     @ManyToOne
     private Volunteer volunteer;
 
@@ -40,8 +42,6 @@ public class Participation {
         setMemberReview(participationDto.getMemberReview());
         setVolunteerRating(participationDto.getVolunteerRating());
         setVolunteerReview(participationDto.getVolunteerReview());
-
-
 
         verifyInvariants();
     }
@@ -129,6 +129,12 @@ public class Participation {
         this.volunteer = volunteer;
         this.volunteer.addParticipation(this);
     }
+
+    public void setVolunteerProfile(VolunteerProfile volunteerProfile) {
+        this.volunteerProfile = volunteerProfile;
+    }
+
+    public VolunteerProfile getVolunteerProfile() { return volunteerProfile; }
 
     private void verifyInvariants() {
         participateOnce();

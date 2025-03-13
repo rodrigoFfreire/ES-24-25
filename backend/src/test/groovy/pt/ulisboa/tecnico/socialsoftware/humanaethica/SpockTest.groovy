@@ -320,6 +320,10 @@ class SpockTest extends Specification {
         return report
     }
 
+    // Volunteer Profile
+
+    public static final String VOLUNTEER_PROFILE_EXAMPLE_BIO = "This is an example bio!"
+
     // clean database
 
     def deleteAll() {
