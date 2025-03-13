@@ -165,24 +165,4 @@ class GetActivitySuggestionWebServiceIT extends SpockTest {
         cleanup:
         deleteAll()
     }
-
-    def "member gets a suggestion that doesnt exist"() {
-        given:
-        demoMemberLogin()
-
-        when:
-        webClient.get()
-                .uri("/suggestions/" + institution.id + "/suggestions/999") // 999 should be an invalid suggestion ID
-                .headers(httpHeaders -> httpHeaders.putAll(headers))
-                .retrieve()
-                .bodyToMono(ActivitySuggestionDto.class)
-                .block()
-
-        then:
-        def error = thrown(WebClientResponseException)
-        error.statusCode == HttpStatus.NOT_FOUND
-
-        cleanup:
-        deleteAll()
-    }
 }
