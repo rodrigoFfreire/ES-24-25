@@ -67,11 +67,6 @@ public class Participation {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-
     public LocalDateTime getAcceptanceDate() {
         return acceptanceDate;
     }
@@ -133,8 +128,6 @@ public class Participation {
     public void setVolunteerProfile(VolunteerProfile volunteerProfile) {
         this.volunteerProfile = volunteerProfile;
     }
-
-    public VolunteerProfile getVolunteerProfile() { return volunteerProfile; }
 
     private void verifyInvariants() {
         participateOnce();

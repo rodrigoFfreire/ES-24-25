@@ -24,7 +24,7 @@ public class VolunteerProfile {
     @JoinColumn(name = "volunteer_id")
     private Volunteer volunteer;
 
-    @OneToMany(mappedBy = "volunteerProfile", orphanRemoval = true, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "volunteerProfile", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Participation> chosenParticipations = new ArrayList<>();
 
     private String shortBio;
@@ -48,8 +48,6 @@ public class VolunteerProfile {
 
         verifyInvariants();
     }
-
-    public void setId(Integer id) { this.id = id; }
 
     public Integer getId() { return id; }
 
@@ -87,16 +85,12 @@ public class VolunteerProfile {
     public Double getAverageRating() { return averageRating; }
 
     public void updateAverageRating() {
-
-        OptionalDouble average = this.volunteer.getParticipations().stream()
+        this.averageRating = this.volunteer.getParticipations().stream()
                 .map(Participation::getMemberRating)
-                .filter(Objects::nonNull)  // Excludes null values
+                .filter(Objects::nonNull)
                 .mapToDouble(Integer::doubleValue)
-                .average();
-
-        // If there are values, update the average; otherwise, keep it as null
-        this.averageRating = average.isPresent() ? average.getAsDouble() : null;
-
+                .average()
+                .orElse(Double.NaN);  // Use NaN as a placeholder for 'null'
     }
 
     public List<Participation> getChosenParticipations() { return chosenParticipations; }
