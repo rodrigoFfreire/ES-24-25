@@ -76,7 +76,7 @@ public class InstitutionProfile {
             
             allInstitutionAssessments.sort((a1, a2) -> a2.getReviewDate().compareTo(a1.getReviewDate()));
             
-            int recentThreshold = (int) Math.ceil(allInstitutionAssessments.size() * 0.2);
+            int recentThreshold = (int) Math.ceil(totalAssessments * 0.2);
             
             List<Assessment> mostRecentAssessments = allInstitutionAssessments.stream()
                     .limit(recentThreshold)
@@ -86,7 +86,7 @@ public class InstitutionProfile {
                     .filter(mostRecentAssessments::contains)
                     .count();
             
-            if (recentAssessmentsCount < totalAssessments * 0.2) {
+            if (recentAssessmentsCount < recentThreshold) {
                 throw new IllegalArgumentException("Pelo menos 20% das avaliações devem ser as mais recentes.");
             }
         }
