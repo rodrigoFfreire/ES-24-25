@@ -32,7 +32,7 @@ public enum ErrorMessage {
     PROFILE_REQUIRES_PARTICIPATION_EVALUATED("Profile requires participation evaluated"),
     PROFILE_REQUIRES_VALID_NUMBER_PARTICIPATIONS("Profile requires that the number of selected participations " +
             "must be at least the minimum of: The total number of evaluated participations or half of the total participations"),
-
+    VOLUNTEER_PROFILE_REQUIRES_INFORMATION("Information about volunteer profile is required"),
     // Activity
     ACTIVITY_NOT_FOUND("Activity not found with id %d"),
     ACTIVITY_NAME_INVALID("Activity Name: %s, is not valid"),
