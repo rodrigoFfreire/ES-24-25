@@ -361,12 +361,9 @@ class SpockTest extends Specification {
         activitySuggestionDto.setStartingDate(DateHandler.toISOString(startingDate))
         activitySuggestionDto.setEndingDate(DateHandler.toISOString(endingDate))
         activitySuggestionDto.setApplicationDeadline(DateHandler.toISOString(applicationDeadline))
-        activitySuggestionDto.setState(state)
+        activitySuggestionDto.setState(state.toString())
         return activitySuggestionDto
     }
-
-
-
 
     // clean database
 
