@@ -37,6 +37,8 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.InstitutionService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionRepository
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionProfileRepository
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.InstitutionProfileService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.repository.ActivityRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.ActivityService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.repository.ThemeRepository
@@ -82,6 +84,12 @@ class SpockTest extends Specification {
 
     @Autowired
     InstitutionRepository institutionRepository
+
+    @Autowired
+    InstitutionProfileService institutionProfileService
+
+    @Autowired
+    InstitutionProfileRepository institutionProfileRepository
 
     def createInstitution(String name, String email, String nif) {
         def institution = new Institution(name, email, nif)
