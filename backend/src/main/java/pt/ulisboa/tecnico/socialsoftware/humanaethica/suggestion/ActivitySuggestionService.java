@@ -57,22 +57,12 @@ public class ActivitySuggestionService {
     }
 
     @Transactional
-    public List<ActivitySuggestionDto> getInstitutionActivitySuggestions(Integer userId, Integer institutionId) {
-        if (userId == null) throw new HEException(USER_NOT_FOUND);
+    public List<ActivitySuggestionDto> getInstitutionActivitySuggestions(Integer institutionId) {
         if (institutionId == null) throw new HEException(INSTITUTION_NOT_FOUND);
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new HEException(USER_NOT_FOUND, userId));
-
-        if (!(user instanceof Member)) {
-            throw new HEException(ONLY_INSTITUTION_MEMBERS_CAN_GET_SUGGESTIONS);
-        }
 
         Institution institution = institutionRepository.findById(institutionId)
                 .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND, institutionId));
         
-        Member member = (Member) user;
-
 
         return activitySuggestionRepository.getActivitySuggestionsByInstitutionId(institutionId).stream()
                 .sorted(Comparator.comparing(ActivitySuggestion::getCreationDate))

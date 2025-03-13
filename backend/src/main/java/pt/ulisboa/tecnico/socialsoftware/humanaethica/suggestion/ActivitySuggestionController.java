@@ -38,8 +38,7 @@ public class ActivitySuggestionController {
 
     @GetMapping("/{institutionId}/suggestions")
     @PreAuthorize("(hasRole('ROLE_MEMBER') and hasPermission(#institutionId, 'INSTITUTION.MEMBER'))")
-    public List<ActivitySuggestionDto> getInstitutionActivitySuggestions(Principal principal, @PathVariable Integer institutionId) {
-        int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
-        return activitySuggestionService.getInstitutionActivitySuggestions(userId, institutionId);
+    public List<ActivitySuggestionDto> getInstitutionActivitySuggestions(@PathVariable Integer institutionId) {
+        return activitySuggestionService.getInstitutionActivitySuggestions(institutionId);
     }
 }

@@ -165,4 +165,25 @@ class GetActivitySuggestionWebServiceIT extends SpockTest {
         cleanup:
         deleteAll()
     }
+
+    def "error: get suggestions when institution doesnt exist"() {
+        given:
+        demoMemberLogin()
+        
+        when:
+        def response = webClient.get()
+                .uri("/suggestions/999/suggestions")
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(ActivitySuggestionDto.class)
+                .collectList()
+                .block()
+
+        then:
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
+
+        cleanup:
+        deleteAll()
+    }
 }

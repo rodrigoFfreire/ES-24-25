@@ -19,13 +19,11 @@ class GetActivitySuggestionServiceTest extends SpockTest {
 
     public static final String EXIST = 'exist'
     public static final String NO_EXIST = 'noExist'
-    def member
     def institution
     def volunteer
 
     def setup() {
         institution = institutionService.getDemoInstitution()
-        member = createMember(USER_1_NAME, USER_1_USERNAME, USER_1_PASSWORD, USER_1_EMAIL, AuthUser.Type.DEMO, institution, User.State.APPROVED)
         volunteer = createVolunteer(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, AuthUser.Type.DEMO, User.State.APPROVED)
 
         def suggestionDto = new ActivitySuggestionDto()
@@ -41,60 +39,29 @@ class GetActivitySuggestionServiceTest extends SpockTest {
         activitySuggestionRepository.save(suggestion)
     }
 
-    def "member gets suggestions successfully"() {
+    def "get an activity suggestion successfully"() {
         when:
-        def result = activitySuggestionService.getInstitutionActivitySuggestions(member.id, institution.id)
+        def result = activitySuggestionService.getInstitutionActivitySuggestions(institution.id)
 
         then:
         result.size() == 1
         result.get(0).name == SUGGESTION_NAME_1
     }
 
-    def "error: admin gets suggestions"() {
-        given:
-        def admin = demoService.getDemoAdmin()
-
-        when:
-        activitySuggestionService.getInstitutionActivitySuggestions(admin.id, institution.id)
-
-        then:
-        def error = thrown(HEException)
-        error.getErrorMessage() == ErrorMessage.ONLY_INSTITUTION_MEMBERS_CAN_GET_SUGGESTIONS
-    }
-
-    def "error: volunteer gets suggestions"() {
-        given:
-        def volunteer = authUserService.loginDemoVolunteerAuth().getUser()
-
-        when:
-        activitySuggestionService.getInstitutionActivitySuggestions(volunteer.id, institution.id)
-
-        then:
-        def error = thrown(HEException)
-        error.getErrorMessage() == ErrorMessage.ONLY_INSTITUTION_MEMBERS_CAN_GET_SUGGESTIONS
-    }
 
     @Unroll
-    def "invalid get: memberId=#memberId | institutionId=#institutionId"() {
+    def "invalid get: institutionId=#institutionId"() {
         when:
-        activitySuggestionService.getInstitutionActivitySuggestions(getMemberId(memberId), getInstitutionId(institutionId))
+        activitySuggestionService.getInstitutionActivitySuggestions(getInstitutionId(institutionId))
 
         then:
         def error = thrown(HEException)
         error.getErrorMessage() == errorMessage
 
         where:
-        memberId | institutionId || errorMessage
-        null     | EXIST         || ErrorMessage.USER_NOT_FOUND
-        NO_EXIST | EXIST         || ErrorMessage.USER_NOT_FOUND
-        EXIST    | null          || ErrorMessage.INSTITUTION_NOT_FOUND
-        EXIST    | NO_EXIST      || ErrorMessage.INSTITUTION_NOT_FOUND
-    }
-
-    def getMemberId(memberId) {
-        if (memberId == EXIST) return member.id
-        if (memberId == NO_EXIST) return 999
-        return null
+        institutionId || errorMessage
+        null          || ErrorMessage.INSTITUTION_NOT_FOUND
+        NO_EXIST      || ErrorMessage.INSTITUTION_NOT_FOUND
     }
 
     def getInstitutionId(institutionId) {
