@@ -17,7 +17,7 @@ import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CreateActivitySuggestionWebServiceTest extends SpockTest {
+class CreateActivitySuggestionWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
@@ -149,6 +149,28 @@ class CreateActivitySuggestionWebServiceTest extends SpockTest {
         then:
         def error = thrown(WebClientResponseException)
         error.statusCode == HttpStatus.FORBIDDEN
+        activitySuggestionRepository.count() == 0
+
+        cleanup:
+        deleteAll()
+    }
+
+    def 'institution id doesnt exit'() {
+        given:
+        demoVolunteerLogin()
+
+        when:
+        def response = webClient.post()
+                .uri('/suggestions/' + 222)
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(activitySuggestionDto)
+                .retrieve()
+                .bodyToMono(ActivitySuggestionDto.class)
+                .block()
+
+        then:
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.BAD_REQUEST
         activitySuggestionRepository.count() == 0
 
         cleanup:

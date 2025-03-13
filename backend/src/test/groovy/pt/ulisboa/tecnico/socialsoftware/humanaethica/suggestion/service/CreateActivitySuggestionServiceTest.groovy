@@ -85,6 +85,37 @@ class CreateActivitySuggestionServiceTest extends SpockTest {
         EXIST       | EXIST         | null            || ErrorMessage.INVALID_ACTIVITY_SUGGESTION_DTO
     }
 
+    def 'error: admin creates activitySuggestion' () {
+        given:
+        def admin = demoService.getDemoAdmin()
+        def activitySuggestionDto = new ActivitySuggestionDto()
+
+        when:
+        def result = activitySuggestionService.createActivitySuggestion(admin.id, institution.id,activitySuggestionDto)
+
+        then:
+        def error = thrown(HEException)
+        error.getErrorMessage() == ErrorMessage.ONLY_VOLUNTEERS_CAN_SUGGEST
+        and:
+        activitySuggestionRepository.findAll().size() == 0
+    }
+
+    def 'error: member creates activitySuggestion' () {
+        given:
+        def member = authUserService.loginDemoMemberAuth().getUser()
+        def activitySuggestionDto = new ActivitySuggestionDto()
+
+        when:
+        def result = activitySuggestionService.createActivitySuggestion(member.id, institution.id, activitySuggestionDto)
+
+        then:
+        def error = thrown(HEException)
+        error.getErrorMessage() == ErrorMessage.ONLY_VOLUNTEERS_CAN_SUGGEST
+        and:
+        activitySuggestionRepository.findAll().size() == 0
+    }
+
+
     def getVolunteerId(volunteerId) {
         if (volunteerId == EXIST)
             return volunteer.id
