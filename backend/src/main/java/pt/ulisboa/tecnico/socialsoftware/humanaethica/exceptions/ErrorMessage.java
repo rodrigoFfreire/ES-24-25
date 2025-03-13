@@ -27,6 +27,12 @@ public enum ErrorMessage {
     THEME_CAN_NOT_BE_DELETED("Theme %s can not be deleted because has associated Institutions"),
     THEME_NOT_APPROVED("Theme %s is not yet approved"),
 
+    // Volunter Profile
+    PROFILE_REQUIRES_SHORTBIO("Profile requires shortbio with at least 10 characters"),
+    PROFILE_REQUIRES_PARTICIPATION_EVALUATED("Profile requires participation evaluated"),
+    PROFILE_REQUIRES_VALID_NUMBER_PARTICIPATIONS("Profile requires that the number of selected participations " +
+            "must be at least the minimum of: The total number of evaluated participations or half of the total participations"),
+
     // Activity
     ACTIVITY_NOT_FOUND("Activity not found with id %d"),
     ACTIVITY_NAME_INVALID("Activity Name: %s, is not valid"),

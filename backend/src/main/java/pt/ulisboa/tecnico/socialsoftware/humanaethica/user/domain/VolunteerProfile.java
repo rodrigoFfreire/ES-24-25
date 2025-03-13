@@ -1,14 +1,18 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain;
 
+import java.util.ArrayList;
+
 import jakarta.persistence.*;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Participation;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.dto.ParticipationDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.dto.VolunteerProfileDto;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.OptionalDouble;
+
+import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
 
 @Entity
 public class VolunteerProfile {
@@ -20,7 +24,7 @@ public class VolunteerProfile {
     @JoinColumn(name = "volunteer_id")
     private Volunteer volunteer;
 
-    @OneToMany(mappedBy = "volunteerProfile", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "volunteerProfile", orphanRemoval = true, cascade = CascadeType.PERSIST)
     private List<Participation> chosenParticipations = new ArrayList<>();
 
     private String shortBio;
@@ -108,6 +112,33 @@ public class VolunteerProfile {
     }
 
     private void verifyInvariants() {
-        // TODO Implement invariants
+        shortBioLength();
+        validNumberOfParticipations();
+        participationIsEvaluated();
+    }
+
+    private void shortBioLength() {
+        if (this.shortBio == null || this.shortBio.trim().length() < 10) {
+            throw new HEException(PROFILE_REQUIRES_SHORTBIO);
+        }
+    }
+
+    private void participationIsEvaluated() {
+        if (chosenParticipations.stream().anyMatch(participation -> participation.getMemberRating() == null)) {
+            throw new HEException(PROFILE_REQUIRES_PARTICIPATION_EVALUATED);
+        }
+    }
+
+    private void validNumberOfParticipations(){
+        int ns = this.chosenParticipations.size();
+        int tp = this.volunteer.getParticipations().size();
+        int ta = (int) this.volunteer.getParticipations().stream()
+                .filter(participation -> participation.getMemberRating() != null)
+                .count();
+        int minRequired = Math.min(tp / 2, ta);
+
+        if (ns < minRequired) {
+            throw new HEException(PROFILE_REQUIRES_VALID_NUMBER_PARTICIPATIONS);
+        }
     }
 }
