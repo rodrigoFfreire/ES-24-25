@@ -17,7 +17,7 @@ public class InstitutionProfileController {
     public InstitutionProfileDto getInstitutionProfile(@PathVariable Integer institutionId) {
         return institutionProfileService.getInstitutionProfile(institutionId);
     }
-}
+
     @PostMapping("/{institutionId}")
     @PreAuthorize("hasRole('ROLE_MEMBER') and @securityService.isMemberOfInstitution(authentication, #institutionId)")
     public InstitutionProfileDto createInstitutionProfile(
