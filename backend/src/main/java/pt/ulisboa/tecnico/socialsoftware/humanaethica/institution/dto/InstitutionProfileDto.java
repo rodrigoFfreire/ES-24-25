@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.InstitutionProfile;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.dto.AssessmentDto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +16,7 @@ public class InstitutionProfileDto {
     private int numVolunteers;
     private float averageRating;
     private List<Integer> assessmentIds = new ArrayList<>();
+    private List<AssessmentDto> assessmentDto = new ArrayList<>();
 
     public InstitutionProfileDto() {
     }
@@ -25,6 +27,7 @@ public class InstitutionProfileDto {
         this.numMembers = institutionProfile.getNumMembers();
         this.numActivities = institutionProfile.getNumActivities();
         this.numAssessments = institutionProfile.getNumAssessments();
+
         this.numVolunteers = institutionProfile.getNumVolunteers();
         this.averageRating = institutionProfile.getAverageRating();
         
@@ -33,6 +36,9 @@ public class InstitutionProfileDto {
                 .map(assessment -> assessment.getId()) // Extract only IDs
                 .collect(Collectors.toList());
         }
+        this.assessmentDto = institutionProfile.getAssessments().stream()
+            .map(assessment -> new AssessmentDto(assessment))
+            .toList();
     }
 
     public InstitutionProfileDto(String shortDescription, List<Integer> assessmentIds) {
@@ -102,6 +108,14 @@ public class InstitutionProfileDto {
 
     public void setAssessmentIds(List<Integer> assessmentIds) {
         this.assessmentIds = assessmentIds;
+    }
+
+    public List<AssessmentDto> getAssessments() {
+        return assessmentDto;
+    }
+
+    public void setAssessments(List<AssessmentDto> assessmentDto) {
+        this.assessmentDto = assessmentDto;
     }
 }
 
