@@ -60,7 +60,7 @@ public class InstitutionProfile {
         setShortDescription(institutionProfileDto.getShortDescription());
         setNumActivities(institution.getActivities().size());
         validateAndSelectAssessments(institution, institutionProfileDto.getAssessmentIds());
-        setNumAssessments(assessments.size());
+        setNumAssessments(institution.getAssessments().size());
         setNumMembers(institution.getMembers().size());
         setNumVolunteers(institutionProfileDto.getNumVolunteers());
         setAverageRating(institutionProfileDto.getAverageRating());
