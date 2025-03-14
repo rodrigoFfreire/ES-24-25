@@ -36,7 +36,7 @@ public class ActivitySuggestionDto {
         setApplicationDeadline(DateHandler.toISOString(activitySuggestion.getApplicationDeadline()));
 
         if (deepCopyInstitution && activitySuggestion.getInstitution() != null) {
-            setInstitution(new InstitutionDto(activitySuggestion.getInstitution(), false, false, false));
+            setInstitution(new InstitutionDto(activitySuggestion.getInstitution()));
         }
 
         if (deepCopyVolunteer && activitySuggestion.getVolunteer() != null) {
@@ -138,23 +138,5 @@ public class ActivitySuggestionDto {
 
     public void setVolunteer(UserDto volunteer) {
         this.volunteer = volunteer;
-    }
-
-    @Override
-    public String toString() {
-        return "ActivitySuggestionDto{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", region='" + region + '\'' +
-                ", participantsNumberLimit=" + participantsNumberLimit +
-                ", description='" + description + '\'' +
-                ", startingDate='" + startingDate + '\'' +
-                ", endingDate='" + endingDate + '\'' +
-                ", applicationDeadline='" + applicationDeadline + '\'' +
-                ", creationDate='" + creationDate + '\'' +
-                ", state='" + state + '\'' +
-                ", institution=" + institution +
-                ", volunteer=" + volunteer +
-                '}';
     }
 }

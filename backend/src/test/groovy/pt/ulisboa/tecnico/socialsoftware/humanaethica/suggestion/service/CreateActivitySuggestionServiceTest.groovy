@@ -33,7 +33,8 @@ class CreateActivitySuggestionServiceTest extends SpockTest {
         activitySuggestionDto.setApplicationDeadline(DateHandler.toISOString(IN_SEVEN_DAYS))
         activitySuggestionDto.startingDate = DateHandler.toISOString(IN_TWO_DAYS)
         activitySuggestionDto.endingDate = DateHandler.toISOString(IN_THREE_DAYS)
-
+        activitySuggestionDto.setState(ActivitySuggestion.State.IN_REVIEW.name())
+        def creationDate = activitySuggestionDto.getCreationDate()
         when:
         def result = activitySuggestionService.createActivitySuggestion(volunteer.id, institution.id, activitySuggestionDto)
 
@@ -45,7 +46,8 @@ class CreateActivitySuggestionServiceTest extends SpockTest {
         result.startingDate == DateHandler.toISOString(IN_TWO_DAYS)
         result.endingDate == DateHandler.toISOString(IN_THREE_DAYS)
         result.applicationDeadline == DateHandler.toISOString(IN_SEVEN_DAYS)
-        result.institution.id == institution.id
+        result.getInstitution().getId() == institution.id
+        result.getVolunteer().getId() == volunteer.id
 
         and: "the activitySuggestion is saved in the database"
         activitySuggestionRepository.findAll().size() == 1
@@ -60,6 +62,8 @@ class CreateActivitySuggestionServiceTest extends SpockTest {
         storedActivitySuggestion.endingDate == IN_THREE_DAYS
         storedActivitySuggestion.applicationDeadline == IN_SEVEN_DAYS
         storedActivitySuggestion.institution.id == institution.id
+        storedActivitySuggestion.getId() == result.id
+        DateHandler.toISOString(storedActivitySuggestion.getCreationDate()) == result.creationDate
     }
 
     @Unroll

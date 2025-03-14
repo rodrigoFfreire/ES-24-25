@@ -53,23 +53,10 @@ public class ActivitySuggestion {
         setStartingDate(DateHandler.toLocalDateTime(activitysuggestionDto.getStartingDate()));
         setEndingDate(DateHandler.toLocalDateTime(activitysuggestionDto.getEndingDate()));
         setApplicationDeadline(DateHandler.toLocalDateTime(activitysuggestionDto.getApplicationDeadline()));
-
+        setState(ActivitySuggestion.State.valueOf(activitysuggestionDto.getState()));
+        
         verifyInvariants();
     }
-
-    public void update(ActivitySuggestionDto activitysuggestionDto) {
-        setName(activitysuggestionDto.getName());
-        setRegion(activitysuggestionDto.getRegion());
-        setParticipantsNumberLimit(activitysuggestionDto.getParticipantsNumberLimit());
-        setDescription(activitysuggestionDto.getDescription());
-        setStartingDate(DateHandler.toLocalDateTime(activitysuggestionDto.getStartingDate()));
-        setEndingDate(DateHandler.toLocalDateTime(activitysuggestionDto.getEndingDate()));
-        setApplicationDeadline(DateHandler.toLocalDateTime(activitysuggestionDto.getApplicationDeadline()));
-
-
-        verifyInvariants();
-    }
-
 
     public Integer getId() {
         return id;

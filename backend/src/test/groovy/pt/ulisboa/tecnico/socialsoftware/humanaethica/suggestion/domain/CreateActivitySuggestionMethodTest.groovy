@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.dto.ActivitySuggestionDto
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.domain.ActivitySuggestion
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution
@@ -31,7 +32,7 @@ class CreateActivitySuggestionMethodTest extends SpockTest {
         activitySuggestionDto.startingDate = DateHandler.toISOString(IN_TWO_DAYS)
         activitySuggestionDto.endingDate = DateHandler.toISOString(IN_THREE_DAYS)
         activitySuggestionDto.applicationDeadline = DateHandler.toISOString(IN_SEVEN_DAYS)
-        println "Creation: " + activitySuggestionDto.getCreationDate() + "; deadline:" + activitySuggestionDto.applicationDeadline
+        activitySuggestionDto.setState(ActivitySuggestion.State.IN_REVIEW.name())
     }
 
     def "create activitySuggestion with volunteer and institution "() {
@@ -76,6 +77,7 @@ class CreateActivitySuggestionMethodTest extends SpockTest {
         activitySuggestionDto.setApplicationDeadline(DateHandler.toISOString(IN_SEVEN_DAYS))
         activitySuggestionDto.setStartingDate(DateHandler.toISOString(IN_TWO_DAYS))
         activitySuggestionDto.setEndingDate(DateHandler.toISOString(IN_THREE_DAYS))
+        activitySuggestionDto.setState(ActivitySuggestion.State.IN_REVIEW.name())
 
         when:
         new ActivitySuggestion(institution, volunteer, activitySuggestionDto)
@@ -108,6 +110,7 @@ class CreateActivitySuggestionMethodTest extends SpockTest {
         activitySuggestionDto.setApplicationDeadline(deadline instanceof LocalDateTime ? DateHandler.toISOString(deadline) : deadline as String)
         activitySuggestionDto.setStartingDate(DateHandler.toISOString(IN_ONE_DAY))
         activitySuggestionDto.setEndingDate(DateHandler.toISOString(IN_THREE_DAYS))
+        activitySuggestionDto.setState(ActivitySuggestion.State.IN_REVIEW.name())
 
         when:
         new ActivitySuggestion(institution, volunteer, activitySuggestionDto)
@@ -141,6 +144,7 @@ class CreateActivitySuggestionMethodTest extends SpockTest {
         activitySuggestionDto.setApplicationDeadline(DateHandler.toISOString(IN_SEVEN_DAYS))
         activitySuggestionDto.setStartingDate(DateHandler.toISOString(IN_TWO_DAYS))
         activitySuggestionDto.setEndingDate(DateHandler.toISOString(IN_THREE_DAYS))
+        activitySuggestionDto.setState(ActivitySuggestion.State.IN_REVIEW.name())
 
         when:
         new ActivitySuggestion(institution, volunteer, activitySuggestionDto)
