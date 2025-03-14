@@ -41,6 +41,25 @@ public class InstitutionDto {
         setCreationDate(DateHandler.toISOString(institution.getCreationDate()));
     }
 
+    public InstitutionDto(Institution institution, boolean deepCopyThemes, boolean deepCopyActivities){
+        setId(institution.getId());
+        setEmail(institution.getEmail());
+        setName(institution.getName());
+        setNif(institution.getNIF());
+        setActive(institution.isActive());
+        setCreationDate(DateHandler.toISOString(institution.getCreationDate()));
+        if (deepCopyThemes) {
+            this.themeDto = institution.getThemes().stream()
+                    .map(theme-> new ThemeDto(theme,false, true, false))
+                    .toList();
+        }
+        if (deepCopyActivities) {
+            this.activityDto = institution.getActivities().stream()
+                    .map(activity-> new ActivityDto(activity,false))
+                    .toList();
+        }
+    }
+    
     public InstitutionDto(Institution institution, boolean deepCopyThemes, boolean deepCopyActivities, boolean deepCopySuggestions){
         setId(institution.getId());
         setEmail(institution.getEmail());
