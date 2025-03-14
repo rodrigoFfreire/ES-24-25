@@ -1,66 +1,49 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto.ActivityDto;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.dto.ThemeDto;
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
-
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.InstitutionProfile;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.dto.AssessmentDto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class InstitutionDto {
+public class InstitutionProfileDto {
+    
     private Integer id;
+    private String shortDescription;
+    private int numMembers;
+    private int numActivities;
+    private int numAssessments;
+    private int numVolunteers;
+    private float averageRating;
+    private List<Integer> assessmentIds = new ArrayList<>();
+    private List<AssessmentDto> assessmentDto = new ArrayList<>();
 
-    private String email;
-
-    private String name;
-
-    private String nif;
-
-    private boolean active;
-
-    private String creationDate;
-
-    private List<ThemeDto> themeDto = new ArrayList<>();
-
-    private List<ActivityDto> activityDto = new ArrayList<>();
-
-    public InstitutionDto(){
+    public InstitutionProfileDto() {
     }
 
-    public InstitutionDto(Institution institution){
-        setId(institution.getId());
-        setEmail(institution.getEmail());
-        setName(institution.getName());
-        setNif(institution.getNIF());
-        setActive(institution.isActive());
-        setCreationDate(DateHandler.toISOString(institution.getCreationDate()));
-    }
+    public InstitutionProfileDto(InstitutionProfile institutionProfile) {
+        this.id = institutionProfile.getId();
+        this.shortDescription = institutionProfile.getShortDescription();
+        this.numMembers = institutionProfile.getNumMembers();
+        this.numActivities = institutionProfile.getNumActivities();
+        this.numAssessments = institutionProfile.getNumAssessments();
 
-    public InstitutionDto(Institution institution, boolean deepCopyThemes, boolean deepCopyActivities){
-        setId(institution.getId());
-        setEmail(institution.getEmail());
-        setName(institution.getName());
-        setNif(institution.getNIF());
-        setActive(institution.isActive());
-        setCreationDate(DateHandler.toISOString(institution.getCreationDate()));
-        if (deepCopyThemes) {
-            this.themeDto = institution.getThemes().stream()
-                    .map(theme-> new ThemeDto(theme,false, true, false))
-                    .toList();
+        this.numVolunteers = institutionProfile.getNumVolunteers();
+        this.averageRating = institutionProfile.getAverageRating();
+        
+        if (institutionProfile.getAssessments() != null) {
+            this.assessmentIds = institutionProfile.getAssessments().stream()
+                .map(assessment -> assessment.getId()) // Extract only IDs
+                .collect(Collectors.toList());
         }
-        if (deepCopyActivities) {
-            this.activityDto = institution.getActivities().stream()
-                    .map(activity-> new ActivityDto(activity,false))
-                    .toList();
-        }
+        this.assessmentDto = institutionProfile.getAssessments().stream()
+            .map(assessment -> new AssessmentDto(assessment))
+            .toList();
     }
 
-    public InstitutionDto(RegisterInstitutionDto registerInstitutionDto){
-        setEmail(registerInstitutionDto.getInstitutionEmail());
-        setName(registerInstitutionDto.getInstitutionName());
-        setNif(registerInstitutionDto.getInstitutionNif());
+    public InstitutionProfileDto(String shortDescription, List<Integer> assessmentIds) {
+        this.shortDescription = shortDescription;
+        this.assessmentIds = assessmentIds;
     }
 
     public Integer getId() {
@@ -71,59 +54,69 @@ public class InstitutionDto {
         this.id = id;
     }
 
-    public String getEmail() {
-        return email;
+    public String getShortDescription() {
+        return shortDescription;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
     }
 
-    public String getName() {
-        return name;
+    public int getNumMembers() {
+        return numMembers;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNumMembers(int numMembers) {
+        this.numMembers = numMembers;
     }
 
-    public boolean isActive() {
-        return active;
+    public int getNumActivities() {
+        return numActivities;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setNumActivities(int numActivities) {
+        this.numActivities = numActivities;
     }
 
-    public String getNif() {
-        return nif;
+    public int getNumAssessments() {
+        return numAssessments;
     }
 
-    public void setNif(String nif) {
-        this.nif = nif;
+    public void setNumAssessments(int numAssessments) {
+        this.numAssessments = numAssessments;
     }
 
-    public String getCreationDate() {
-        return creationDate;
+    public int getNumVolunteers() {
+        return numVolunteers;
     }
 
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
+    public void setNumVolunteers(int numVolunteers) {
+        this.numVolunteers = numVolunteers;
     }
 
-    public List<ThemeDto>getThemes() {
-        return themeDto;
+    public float getAverageRating() {
+        return averageRating;
     }
 
-    public void setThemes(List<ThemeDto> themeDto) {
-        this.themeDto = themeDto;
+    public void setAverageRating(float averageRating) {
+        this.averageRating = averageRating;
     }
 
-    public List<ActivityDto>getActivities() {
-        return activityDto;
+    public List<Integer> getAssessmentIds() {
+        return assessmentIds;
     }
 
-    public void setActivities(List<ActivityDto> activityDto) {
-        this.activityDto = activityDto;
+    public void setAssessmentIds(List<Integer> assessmentIds) {
+        this.assessmentIds = assessmentIds;
+    }
+
+    public List<AssessmentDto> getAssessments() {
+        return assessmentDto;
+    }
+
+    public void setAssessments(List<AssessmentDto> assessmentDto) {
+        this.assessmentDto = assessmentDto;
     }
 }
+
+
