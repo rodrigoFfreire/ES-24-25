@@ -29,9 +29,6 @@ public class Volunteer extends User {
     @OneToOne(mappedBy = "volunteer", orphanRemoval = true, cascade = CascadeType.ALL)
     private VolunteerProfile profile;
 
-    @OneToOne(mappedBy = "volunteer", orphanRemoval = true, cascade = CascadeType.ALL)
-    private VolunteerProfile profile;
-
     @OneToMany(mappedBy = "volunteer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ActivitySuggestion> suggestions = new ArrayList<>();
 

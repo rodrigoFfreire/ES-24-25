@@ -34,6 +34,7 @@ class GetActivitySuggestionServiceTest extends SpockTest {
         suggestionDto.setApplicationDeadline(DateHandler.toISOString(IN_SEVEN_DAYS))
         suggestionDto.setStartingDate(DateHandler.toISOString(IN_TWO_DAYS))
         suggestionDto.setEndingDate(DateHandler.toISOString(IN_THREE_DAYS))
+        suggestionDto.setState(ActivitySuggestion.State.IN_REVIEW.name())
 
         def suggestion = new ActivitySuggestion(institution, volunteer, suggestionDto)
         activitySuggestionRepository.save(suggestion)
