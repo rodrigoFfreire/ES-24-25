@@ -4,6 +4,7 @@ public enum ErrorMessage {
     INVALID_TYPE_FOR_AUTH_USER("Invalid type for auth user"),
     INVALID_AUTH_USERNAME("Username: %s, belongs to a different authentication method"),
     INVALID_INSTITUTION_NAME("Name: %s, is not valid"),
+    INSTITUTION_PROFILE_ALREADY_EXISTS("The institution profile already exists for institutionId: %d"),
     USERNAME_ALREADY_EXIST("Username: %s, already exist"),
     NIF_ALREADY_EXIST("Institution with NIF: %s, already exist"),
     INVALID_EMAIL("The mail %s is invalid."),
@@ -26,6 +27,8 @@ public enum ErrorMessage {
     THEME_ALREADY_EXISTS("This theme already exists"),
     THEME_CAN_NOT_BE_DELETED("Theme %s can not be deleted because has associated Institutions"),
     THEME_NOT_APPROVED("Theme %s is not yet approved"),
+    INVALID_DESCRIPTION_LENGTH("The institution profile description must be at least 10 characters long"),
+
 
     // Activity
     ACTIVITY_NOT_FOUND("Activity not found with id %d"),
@@ -57,6 +60,9 @@ public enum ErrorMessage {
     PARTICIPATION_MEMBER_REVIEW_NOT_ALLOWED("Members cannot create or edit a volunteer review"),
     PARTICIPATION_VOLUNTEER_REVIEW_NOT_ALLOWED("Volunteers cannot create or edit a member review"),
     PARTICIPATION_INVALID_RATING("Participation cannot be created with both volunteer and member ratings"),
+    ASSESSMENT_NOT_FROM_INSTITUTION("One or more selected assessments do not belong to this institution"),
+    INSUFFICIENT_SELECTED_ASSESSMENTS("Not enough assessments selected. At least 50% of the institution’s assessments must be included"),
+    INSUFFICIENT_RECENT_ASSESSMENTS("Not enough recent assessments selected. At least 20% of the institution’s most recent assessments must be included"),
     ASSESSMENT_VOLUNTEER_CAN_ASSESS_INSTITUTION_ONLY_ONCE("Volunteer has already assessed the institution"),
     ASSESSMENT_ONLY_IF_INSTITUTION_HAS_FINISHED_ACTIVITIES("Institution does not have any finished activity"),
     ASSESSMENT_REQUIRES_REVIEW("To do an assessment have to write a review message"),

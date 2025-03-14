@@ -20,5 +20,6 @@ public interface ActivityRepository extends JpaRepository<Activity, Integer> {
     @Query(value = "DELETE FROM activity_themes", nativeQuery = true)
     void deleteAllActivityTheme();
 
-
+    @Query("SELECT COUNT(a) FROM Activity a WHERE a.institution.id = :institutionId")
+    Integer countActivitiesByInstitutionId(Integer institutionId);
 }

@@ -7,10 +7,12 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessme
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.domain.Theme;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.dto.InstitutionProfileDto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "institutions")
@@ -26,6 +28,9 @@ public class Institution {
     private String nif;
 
     private boolean active = false;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "institution", fetch = FetchType.EAGER, orphanRemoval = true)
+    private InstitutionProfile profile;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -189,5 +194,13 @@ public class Institution {
 
     public void deleteAssessment(Assessment assessment) {
         this.assessments.remove(assessment);
+    }
+
+    public InstitutionProfile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(InstitutionProfile profile) {
+        this.profile = profile;
     }
 }

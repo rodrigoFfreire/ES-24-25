@@ -18,6 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.Participatio
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.report.ReportService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.InstitutionService
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.InstitutionProfileService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.ActivityService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.ThemeService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserService
@@ -65,6 +66,11 @@ class BeanConfiguration {
     @Bean
     InstitutionService institutionService() {
         return new InstitutionService()
+    }
+
+    @Bean
+    InstitutionProfileService institutionProfileService() {
+        return new InstitutionProfileService()
     }
 
     @Bean

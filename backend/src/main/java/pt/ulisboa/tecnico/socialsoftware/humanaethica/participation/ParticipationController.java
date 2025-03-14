@@ -52,5 +52,4 @@ public class ParticipationController {
     public ParticipationDto deleteParticipation(@PathVariable Integer participationId) {
         return participationService.deleteParticipation(participationId);
     }
-
 }

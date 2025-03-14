@@ -1,31 +1,37 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.dto.InstitutionProfileDto;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
+
 import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessment;
+import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "institution_profiles")
 public class InstitutionProfile {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @OneToOne
-    @JoinColumn(name = "institution_id")
+    @JoinColumn(name = "institution_id", nullable = false, unique = true)
     private Institution institution;
 
-    @Column(name = "short_description", length = 255)
+    @Column(name = "short_description", length = 255, nullable = false)
     private String shortDescription;
-
-    @Column(name = "num_members")
-    private int numMembers;
 
     @Column(name = "num_activities")
     private int numActivities;
+
+    @Column(name = "num_members")
+    private int numMembers;
 
     @Column(name = "num_assessments")
     private int numAssessments;
@@ -33,26 +39,53 @@ public class InstitutionProfile {
     @Column(name = "num_volunteers")
     private int numVolunteers;
 
+    @OneToMany
+    private List<Assessment> assessments = new ArrayList<>();
+
     @Column(name = "average_rating")
     private float averageRating;
 
-    @OneToMany()
-    private List<Assessment> assessments = new ArrayList<>();
-
     public InstitutionProfile() {}
 
-    public InstitutionProfile(Institution institution, String shortDescription, int numMembers, 
-                              int numActivities, int numAssessments, int numVolunteers, float averageRating) {
+    public InstitutionProfile(Institution institution, InstitutionProfileDto institutionProfileDto) {
+        if (institution == null) {
+            throw new HEException(INSTITUTION_NOT_FOUND, null);
+        }
+        
+        if (institution.getProfile() != null) {
+            throw new HEException(INSTITUTION_PROFILE_ALREADY_EXISTS, institution.getId());
+        }
+
+        this.institution = institution;
+        setShortDescription(institutionProfileDto.getShortDescription());
+        setNumActivities(institution.getActivities().size());
+        validateAndSelectAssessments(institution, institutionProfileDto.getAssessmentIds());
+        setNumAssessments(assessments.size());
+        setNumMembers(institution.getMembers().size());
+        setNumVolunteers(institutionProfileDto.getNumVolunteers());
+        setAverageRating(institutionProfileDto.getAverageRating());
         setInstitution(institution);
-        setShortDescription(shortDescription);
-        setNumMembers(numMembers);
-        setNumActivities(numActivities);
-        setNumAssessments(numAssessments);
-        setNumVolunteers(numVolunteers);
-        setAverageRating(averageRating);
 
         verifyInvariants();
     }
+    
+    private void validateAndSelectAssessments(Institution institution, List<Integer> assessmentIds) {
+        Set<Integer> validAssessmentIds = institution.getAssessments().stream()
+                .map(Assessment::getId)
+                .collect(Collectors.toSet());
+
+        if (!validAssessmentIds.containsAll(assessmentIds)) {
+            throw new HEException(ASSESSMENT_NOT_FROM_INSTITUTION);
+        }
+
+        List<Assessment> selectedAssessments = institution.getAssessments().stream()
+                .filter(assessment -> assessmentIds.contains(assessment.getId()))
+                .collect(Collectors.toList());
+
+        this.assessments = selectedAssessments;
+        verifySelectedAssessments();
+    }
+
     public void verifyInvariants() {
         verifyDescriptionLength();
         verifyRecentAssessments();
@@ -61,7 +94,7 @@ public class InstitutionProfile {
 
     private void verifyDescriptionLength() {
         if (shortDescription == null || shortDescription.length() < 10) {
-            throw new IllegalArgumentException("A descrição da instituição deve ter pelo menos 10 caracteres.");
+            throw new HEException(INVALID_DESCRIPTION_LENGTH);
         }
     }
 
@@ -73,7 +106,7 @@ public class InstitutionProfile {
             
             allInstitutionAssessments.sort((a1, a2) -> a2.getReviewDate().compareTo(a1.getReviewDate()));
             
-            int recentThreshold = (int) Math.ceil(allInstitutionAssessments.size() * 0.2);
+            int recentThreshold = (int) Math.ceil(totalAssessments * 0.2);
             
             List<Assessment> mostRecentAssessments = allInstitutionAssessments.stream()
                     .limit(recentThreshold)
@@ -83,8 +116,8 @@ public class InstitutionProfile {
                     .filter(mostRecentAssessments::contains)
                     .count();
             
-            if (recentAssessmentsCount < totalAssessments * 0.2) {
-                throw new IllegalArgumentException("Pelo menos 20% das avaliações devem ser as mais recentes.");
+            if (recentAssessmentsCount < recentThreshold) {
+                throw new HEException(INSUFFICIENT_RECENT_ASSESSMENTS);
             }
         }
     }
@@ -94,10 +127,11 @@ public class InstitutionProfile {
         int totalAssessments = institution.getAssessments().size();
 
         if (selectedAssessmentsCount < totalAssessments * 0.5) {
-            throw new IllegalArgumentException("Pelo menos 50% das avaliações devem ser selecionadas.");
+            System.out.println("Selected assessments count: " + selectedAssessmentsCount + ", total assessments super unique count: " + totalAssessments);
+            throw new HEException(INSUFFICIENT_SELECTED_ASSESSMENTS);
         }
     }
-
+    
 
     public Integer getId() {
         return id;
