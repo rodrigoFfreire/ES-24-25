@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.dto.AssessmentDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.InstitutionProfile;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,25 +8,19 @@ import java.util.stream.Collectors;
 public class InstitutionProfileDto {
     
     private Integer id;
-    private InstitutionDto institution;
     private String shortDescription;
     private int numMembers;
     private int numActivities;
     private int numAssessments;
     private int numVolunteers;
     private float averageRating;
-    private List<AssessmentDto> assessments = new ArrayList<>();
+    private List<Integer> assessmentIds = new ArrayList<>();
 
     public InstitutionProfileDto() {
     }
 
     public InstitutionProfileDto(InstitutionProfile institutionProfile) {
         this.id = institutionProfile.getId();
-        
-        if (institutionProfile.getInstitution() != null) {
-            this.institution = new InstitutionDto(institutionProfile.getInstitution());
-        }
-        
         this.shortDescription = institutionProfile.getShortDescription();
         this.numMembers = institutionProfile.getNumMembers();
         this.numActivities = institutionProfile.getNumActivities();
@@ -36,10 +29,15 @@ public class InstitutionProfileDto {
         this.averageRating = institutionProfile.getAverageRating();
         
         if (institutionProfile.getAssessments() != null) {
-            this.assessments = institutionProfile.getAssessments().stream()
-                .map(AssessmentDto::new)
+            this.assessmentIds = institutionProfile.getAssessments().stream()
+                .map(assessment -> assessment.getId()) // Extract only IDs
                 .collect(Collectors.toList());
         }
+    }
+
+    public InstitutionProfileDto(String shortDescription, List<Integer> assessmentIds) {
+        this.shortDescription = shortDescription;
+        this.assessmentIds = assessmentIds;
     }
 
     public Integer getId() {
@@ -48,14 +46,6 @@ public class InstitutionProfileDto {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public InstitutionDto getInstitution() {
-        return institution;
-    }
-
-    public void setInstitution(InstitutionDto institution) {
-        this.institution = institution;
     }
 
     public String getShortDescription() {
@@ -106,11 +96,12 @@ public class InstitutionProfileDto {
         this.averageRating = averageRating;
     }
 
-    public List<AssessmentDto> getAssessments() {
-        return assessments;
+    public List<Integer> getAssessmentIds() {
+        return assessmentIds;
     }
 
-    public void setAssessments(List<AssessmentDto> assessments) {
-        this.assessments = assessments;
+    public void setAssessmentIds(List<Integer> assessmentIds) {
+        this.assessmentIds = assessmentIds;
     }
 }
+

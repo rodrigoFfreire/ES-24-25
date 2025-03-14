@@ -7,6 +7,8 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessme
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "institution_profiles")
@@ -52,8 +54,27 @@ public class InstitutionProfile {
         setNumVolunteers(institutionProfileDto.getNumVolunteers());
         setAverageRating(institutionProfileDto.getAverageRating());
         setAssessments(new ArrayList<>(institution.getAssessments()));
+        setAssessments(filterAndValidateAssessments(institution, institutionProfileDto.getAssessmentIds()));
 
         verifyInvariants();
+    }
+
+    private List<Assessment> filterAndValidateAssessments(Institution institution, List<Integer> assessmentIds) {
+        if (assessmentIds == null || assessmentIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        Set<Integer> institutionAssessmentIds = institution.getAssessments().stream()
+                .map(Assessment::getId)
+                .collect(Collectors.toSet());
+
+        if (!institutionAssessmentIds.containsAll(assessmentIds)) {
+            throw new IllegalArgumentException("Some assessment IDs do not belong to this institution.");
+        }
+
+        return institution.getAssessments().stream()
+                .filter(assessment -> assessmentIds.contains(assessment.getId()))
+                .collect(Collectors.toList());
     }
 
     public void verifyInvariants() {
