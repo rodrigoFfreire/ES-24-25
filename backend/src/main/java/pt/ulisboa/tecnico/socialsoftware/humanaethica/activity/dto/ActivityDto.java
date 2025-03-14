@@ -53,7 +53,7 @@ public class ActivityDto {
         setSuspendedByUserId(activity.getSuspendedByUserId());
 
         if (deepCopyInstitution && (activity.getInstitution() != null)) {
-                setInstitution(new InstitutionDto(activity.getInstitution(), false, false));
+                setInstitution(new InstitutionDto(activity.getInstitution(), false, false, false));
 
         }
     }

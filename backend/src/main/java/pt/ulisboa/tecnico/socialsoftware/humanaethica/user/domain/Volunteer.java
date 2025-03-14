@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain;
 
 import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessment;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.domain.ActivitySuggestion;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.enrollment.domain.Enrollment;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.participation.domain.Participation;
@@ -27,6 +28,9 @@ public class Volunteer extends User {
 
     @OneToOne(mappedBy = "volunteer", orphanRemoval = true, cascade = CascadeType.ALL)
     private VolunteerProfile profile;
+
+    @OneToMany(mappedBy = "volunteer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ActivitySuggestion> suggestions = new ArrayList<>();
 
     public Volunteer() {
     }
@@ -116,4 +120,13 @@ public class Volunteer extends User {
     public VolunteerProfile getProfile() { return profile; }
 
     public void setProfile(VolunteerProfile profile) { this.profile = profile; }
+
+    public List<ActivitySuggestion> getActivitySuggestions() {
+        return this.suggestions;
+    }
+
+    public void addActivitySuggestion(ActivitySuggestion suggestion) {
+        this.suggestions.add(suggestion);
+    }
+
 }

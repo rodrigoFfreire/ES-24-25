@@ -20,6 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserApplicationalServ
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.InstitutionService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.ActivityService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserProfileService
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.ActivitySuggestionService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.ThemeService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.Mailer
@@ -80,6 +81,11 @@ class BeanConfiguration {
     @Bean
     ActivityService activityService() {
         return new ActivityService()
+    }
+
+    @Bean
+    ActivitySuggestionService activitySuggestionService() {
+        return new ActivitySuggestionService()
     }
 
     @Bean

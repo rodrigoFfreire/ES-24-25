@@ -2,9 +2,16 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.user.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.User.Role;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.dto.ActivitySuggestionDto;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 public class UserDto {
     private Integer id;
@@ -31,6 +38,8 @@ public class UserDto {
     
     private boolean hasDocument;
 
+    private List<ActivitySuggestionDto> suggestionDto;
+
     public UserDto() {
     }
 
@@ -52,6 +61,13 @@ public class UserDto {
 
         if (user.getRole().equals(Role.MEMBER)){
             this.institutionName = ((Member) user).getInstitution().getName();
+        }
+
+        if (user.getRole().equals(Role.VOLUNTEER)) { 
+            this.suggestionDto = ((Volunteer) user).getActivitySuggestions()
+                .stream()
+                .map(activitySuggestion -> new ActivitySuggestionDto(false, false, activitySuggestion))
+                .collect(Collectors.toList());
         }
 
         else
@@ -157,4 +173,13 @@ public class UserDto {
     public void setHasDocument(boolean hasDocument) {
         this.hasDocument = hasDocument;
     }
+
+    public List<ActivitySuggestionDto> getActivitySuggestions() {
+        return suggestionDto;
+    }
+
+    public void setActivitySuggestions(List<ActivitySuggestionDto> suggestionDto) {
+        this.suggestionDto = suggestionDto;
+    }
+
 }

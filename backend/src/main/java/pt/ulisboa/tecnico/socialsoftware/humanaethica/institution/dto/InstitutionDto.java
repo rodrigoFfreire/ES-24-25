@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.activity.dto.ActivityDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.dto.ActivitySuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.dto.ThemeDto;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler;
 
@@ -25,6 +26,8 @@ public class InstitutionDto {
     private List<ThemeDto> themeDto = new ArrayList<>();
 
     private List<ActivityDto> activityDto = new ArrayList<>();
+
+    private List<ActivitySuggestionDto> suggestionDto = new ArrayList<>();
 
     public InstitutionDto(){
     }
@@ -53,6 +56,30 @@ public class InstitutionDto {
         if (deepCopyActivities) {
             this.activityDto = institution.getActivities().stream()
                     .map(activity-> new ActivityDto(activity,false))
+                    .toList();
+        }
+    }
+    
+    public InstitutionDto(Institution institution, boolean deepCopyThemes, boolean deepCopyActivities, boolean deepCopySuggestions){
+        setId(institution.getId());
+        setEmail(institution.getEmail());
+        setName(institution.getName());
+        setNif(institution.getNIF());
+        setActive(institution.isActive());
+        setCreationDate(DateHandler.toISOString(institution.getCreationDate()));
+        if (deepCopyThemes) {
+            this.themeDto = institution.getThemes().stream()
+                    .map(theme-> new ThemeDto(theme,false, true, false))
+                    .toList();
+        }
+        if (deepCopyActivities) {
+            this.activityDto = institution.getActivities().stream()
+                    .map(activity-> new ActivityDto(activity,false))
+                    .toList();
+        }
+        if (deepCopySuggestions) {
+            this.suggestionDto = institution.getActivitySuggestions().stream()
+                    .map(suggestion -> new ActivitySuggestionDto(false, false, suggestion))
                     .toList();
         }
     }
@@ -125,5 +152,13 @@ public class InstitutionDto {
 
     public void setActivities(List<ActivityDto> activityDto) {
         this.activityDto = activityDto;
+    }
+
+    public List<ActivitySuggestionDto> getActivitySuggestions() {
+        return suggestionDto;
+    }
+
+    public void setActivitySuggestions(List<ActivitySuggestionDto> suggestionDto) {
+        this.suggestionDto = suggestionDto;
     }
 }

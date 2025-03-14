@@ -44,6 +44,10 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.ThemeService
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.VolunteerProfileRepository
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.Mailer
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.repository.ActivitySuggestionRepository
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.ActivitySuggestionService
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.domain.ActivitySuggestion
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.dto.ActivitySuggestionDto
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -71,6 +75,9 @@ class SpockTest extends Specification {
     public static final LocalDateTime IN_ONE_DAY = DateHandler.now().plusDays(1)
     public static final LocalDateTime IN_TWO_DAYS = DateHandler.now().plusDays(2)
     public static final LocalDateTime IN_THREE_DAYS = DateHandler.now().plusDays(3)
+    public static final LocalDateTime IN_SIX_DAYS = DateHandler.now().plusDays(6)
+    public static final LocalDateTime IN_SEVEN_DAYS = DateHandler.now().plusDays(7).plusMinutes(1)
+
 
     // institution
 
@@ -330,6 +337,34 @@ class SpockTest extends Specification {
     @Autowired
     VolunteerProfileRepository volunteerProfileRepository
 
+    // activity suggestion
+
+    public static final String SUGGESTION_NAME_1 = "suggestion name 1"
+    public static final String SUGGESTION_NAME_2 = "suggestion name 2"
+    public static final String SUGGESTION_REGION_1 = "suggestion region 1"
+    public static final String SUGGESTION_REGION_2 = "suggestion region 2"
+    public static final String SUGGESTION_DESCRIPTION_1 = "suggestion description 1"
+    public static final String SUGGESTION_DESCRIPTION_2 = "suggestion description 2"
+    public static final int SUGGESTION_PARTICIPANTS_LIMIT_1 = 5
+
+    @Autowired
+    ActivitySuggestionService activitySuggestionService
+    @Autowired
+    ActivitySuggestionRepository activitySuggestionRepository
+
+    def createActivitySuggestionDto(name, region, number, description, startingDate, endingDate, applicationDeadline, state) {
+        def activitySuggestionDto = new ActivitySuggestionDto()
+        activitySuggestionDto.setName(name)
+        activitySuggestionDto.setRegion(region)
+        activitySuggestionDto.setParticipantsNumberLimit(number)
+        activitySuggestionDto.setDescription(description)
+        activitySuggestionDto.setStartingDate(DateHandler.toISOString(startingDate))
+        activitySuggestionDto.setEndingDate(DateHandler.toISOString(endingDate))
+        activitySuggestionDto.setApplicationDeadline(DateHandler.toISOString(applicationDeadline))
+        activitySuggestionDto.setState(state.toString())
+        return activitySuggestionDto
+    }
+
     // clean database
 
     def deleteAll() {
@@ -343,6 +378,7 @@ class SpockTest extends Specification {
         userRepository.deleteAll()
         institutionRepository.deleteAll()
         themeRepository.deleteAll()
+        activitySuggestionRepository.deleteAll()
 
     }
 
