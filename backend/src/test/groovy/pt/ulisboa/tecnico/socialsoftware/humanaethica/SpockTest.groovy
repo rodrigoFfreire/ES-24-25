@@ -310,6 +310,15 @@ class SpockTest extends Specification {
         return assessment
     }
 
+    def createAssessmentWithDate(institution, volunteer, review, date) {
+        def assessmentDto = new AssessmentDto()
+        assessmentDto.setReview(review)
+        assessmentDto.setReviewDate(DateHandler.toISOString(date))
+        def assessment = new Assessment(institution, volunteer, assessmentDto)
+        assessmentRepository.save(assessment)
+        return assessment
+    }
+
     // report
 
     public static final String REPORT_JUSTIFICATION_1 = "report justification 1"
