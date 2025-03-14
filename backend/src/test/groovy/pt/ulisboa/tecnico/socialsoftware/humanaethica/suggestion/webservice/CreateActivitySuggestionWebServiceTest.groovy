@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.Institution
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.dto.ActivitySuggestionDto
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.suggestion.domain.ActivitySuggestion
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.utils.DateHandler
 
 import java.time.Instant
@@ -50,6 +51,8 @@ class CreateActivitySuggestionWebServiceIT extends SpockTest {
         activitySuggestionDto.setApplicationDeadline(seven_days)
         activitySuggestionDto.setStartingDate(two_days)
         activitySuggestionDto.setEndingDate(three_days)
+        activitySuggestionDto.setState(ActivitySuggestion.State.IN_REVIEW.name())
+
     }
 
     def 'volunteer creates suggestion'() {
