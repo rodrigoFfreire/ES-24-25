@@ -82,7 +82,7 @@ class CreateInstitutionProfileTest extends SpockTest {
         result.shortDescription == "This is a test description for the institution profile."
         result.numMembers == 3
         result.numActivities == 2
-        result.numAssessments == 2
+        result.numAssessments == 3
         
         and: "the selected assessments are stored"
         def storedProfile = institutionProfileRepository.findAll().get(0)
