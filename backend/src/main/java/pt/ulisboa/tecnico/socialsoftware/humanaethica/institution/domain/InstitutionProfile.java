@@ -69,7 +69,7 @@ public class InstitutionProfile {
         verifyInvariants();
     }
     
-    private void selectAssessments(Institution institution, List<Integer> assessmentIds) {
+    public void selectAssessments(Institution institution, List<Integer> assessmentIds) {
         Set<Integer> validAssessmentIds = institution.getAssessments().stream()
                 .map(Assessment::getId)
                 .collect(Collectors.toSet());
@@ -197,7 +197,7 @@ public class InstitutionProfile {
         return assessments;
     }
 
-    public void setAssessments(List<Assessment> assessments) {
+    private void setAssessments(List<Assessment> assessments) {
         this.assessments = assessments;
     }
 }
