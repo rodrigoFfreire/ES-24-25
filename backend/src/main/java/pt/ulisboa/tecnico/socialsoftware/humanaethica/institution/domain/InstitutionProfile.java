@@ -59,7 +59,7 @@ public class InstitutionProfile {
         this.institution = institution;
         setShortDescription(institutionProfileDto.getShortDescription());
         setNumActivities(institution.getActivities().size());
-        validateAndSelectAssessments(institution, institutionProfileDto.getAssessmentIds());
+        selectAssessments(institution, institutionProfileDto.getAssessmentIds());
         setNumAssessments(institution.getAssessments().size());
         setNumMembers(institution.getMembers().size());
         setNumVolunteers(institutionProfileDto.getNumVolunteers());
@@ -69,7 +69,7 @@ public class InstitutionProfile {
         verifyInvariants();
     }
     
-    private void validateAndSelectAssessments(Institution institution, List<Integer> assessmentIds) {
+    private void selectAssessments(Institution institution, List<Integer> assessmentIds) {
         Set<Integer> validAssessmentIds = institution.getAssessments().stream()
                 .map(Assessment::getId)
                 .collect(Collectors.toSet());
@@ -82,7 +82,7 @@ public class InstitutionProfile {
                 .filter(assessment -> assessmentIds.contains(assessment.getId()))
                 .collect(Collectors.toList());
 
-        this.assessments = selectedAssessments;
+        setAssessments(selectedAssessments);
         verifySelectedAssessments();
     }
 
@@ -132,13 +132,8 @@ public class InstitutionProfile {
         }
     }
     
-
     public Integer getId() {
         return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Institution getInstitution() {
@@ -147,6 +142,7 @@ public class InstitutionProfile {
 
     public void setInstitution(Institution institution) {
         this.institution = institution;
+        this.institution.setProfile(this);
     }
 
     public String getShortDescription() {
@@ -203,14 +199,6 @@ public class InstitutionProfile {
 
     public void setAssessments(List<Assessment> assessments) {
         this.assessments = assessments;
-    }
-
-    public void addAssessment(Assessment assessment) {
-        this.assessments.add(assessment);
-    }
-
-    public void removeAssessment(Assessment assessment) {
-        this.assessments.remove(assessment);
     }
 }
 
