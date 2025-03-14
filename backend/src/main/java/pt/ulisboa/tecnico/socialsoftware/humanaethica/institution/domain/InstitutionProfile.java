@@ -39,11 +39,13 @@ public class InstitutionProfile {
     @Column(name = "num_volunteers")
     private int numVolunteers;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Assessment> assessments = new ArrayList<>();
 
     @Column(name = "average_rating")
     private float averageRating;
+
+
 
     public InstitutionProfile() {}
 
@@ -199,6 +201,16 @@ public class InstitutionProfile {
 
     private void setAssessments(List<Assessment> assessments) {
         this.assessments = assessments;
+    }
+
+    public void deleteAssessment(Assessment assessment) {
+        this.assessments.remove(assessment);
+    }
+
+    public void delete() {
+        for (Assessment assessment : this.assessments) {
+            deleteAssessment(assessment);
+        }
     }
 }
 
