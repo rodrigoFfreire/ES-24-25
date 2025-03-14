@@ -5,6 +5,7 @@ public enum ErrorMessage {
     INVALID_AUTH_USERNAME("Username: %s, belongs to a different authentication method"),
     INVALID_INSTITUTION_NAME("Name: %s, is not valid"),
     INSTITUTION_PROFILE_ALREADY_EXISTS("The institution profile already exists for institutionId: %d"),
+    INSTITUTION_PROFILE_NOT_FOUND("Either the institution does not have a institution profile does not exist or the institution with institutionId: %d does not exist"),
     USERNAME_ALREADY_EXIST("Username: %s, already exist"),
     NIF_ALREADY_EXIST("Institution with NIF: %s, already exist"),
     INVALID_EMAIL("The mail %s is invalid."),

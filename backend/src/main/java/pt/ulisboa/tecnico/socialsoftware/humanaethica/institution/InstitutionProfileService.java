@@ -48,7 +48,7 @@ public class InstitutionProfileService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public InstitutionProfileDto getInstitutionProfile(Integer institutionId) {
         InstitutionProfile institutionProfile = institutionProfileRepository.findInstitutionProfileByInstitutionId(institutionId)
-                .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND, institutionId));
+                .orElseThrow(() -> new HEException(INSTITUTION_PROFILE_NOT_FOUND, institutionId));
 
         return new InstitutionProfileDto(institutionProfile);
     }
