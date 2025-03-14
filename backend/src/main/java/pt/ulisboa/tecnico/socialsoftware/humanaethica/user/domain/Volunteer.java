@@ -25,6 +25,9 @@ public class Volunteer extends User {
     @OneToMany(mappedBy = "volunteer")
     private List<Report> reports = new ArrayList<>();
 
+    @OneToOne(mappedBy = "volunteer", orphanRemoval = true, cascade = CascadeType.ALL)
+    private VolunteerProfile profile;
+
     public Volunteer() {
     }
 
@@ -46,10 +49,16 @@ public class Volunteer extends User {
 
     public void addEnrollment(Enrollment enrollment) {
         this.enrollments.add(enrollment);
+        if (profile != null) {
+            profile.updateNumTotalEnrollments();
+        }
     }
 
     public void removeEnrollment(Enrollment enrollment) {
         this.enrollments.remove(enrollment);
+        if (profile != null) {
+            profile.updateNumTotalEnrollments();
+        }
     }
 
     public List<Participation> getParticipations() {
@@ -62,10 +71,16 @@ public class Volunteer extends User {
 
     public void addParticipation(Participation participation) {
         this.participations.add(participation);
+        if (profile != null) {
+            profile.updateNumTotalParticipations();
+        }
     }
 
     public void deleteParticipation(Participation participation) {
         this.participations.remove(participation);
+        if (profile != null) {
+            profile.updateNumTotalParticipations();
+        }
     }
 
     public List<Assessment> getAssessments() {
@@ -74,12 +89,18 @@ public class Volunteer extends User {
 
     public void addAssessment(Assessment assessment) {
         this.assessments.add(assessment);
+        if (profile != null) {
+            profile.updateNumTotalAssessments();
+        }
     }
 
     public void deleteAssessment(Assessment assessment) {
         this.assessments.remove(assessment);
+        if (profile != null) {
+            profile.updateNumTotalAssessments();
+        }
     }
-    
+
     public void addReport(Report report) {
         this.reports.add(report);
     }
@@ -91,4 +112,8 @@ public class Volunteer extends User {
     public List<Report> getReports() {
         return reports;
     }
+
+    public VolunteerProfile getProfile() { return profile; }
+
+    public void setProfile(VolunteerProfile profile) { this.profile = profile; }
 }
