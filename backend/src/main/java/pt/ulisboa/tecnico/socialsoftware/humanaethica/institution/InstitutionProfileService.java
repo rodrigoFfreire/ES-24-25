@@ -53,8 +53,9 @@ public class InstitutionProfileService {
         return new InstitutionProfileDto(institutionProfile);
     }
 
+    @Transactional
     public InstitutionProfileDto createInstitutionProfile(Integer institutionId, InstitutionProfileDto institutionProfileDto) {
-        // Verify institution exists
+
         Institution institution = institutionRepository.findById(institutionId)
                 .orElseThrow(() -> new HEException(INSTITUTION_NOT_FOUND, institutionId));
         
@@ -62,7 +63,8 @@ public class InstitutionProfileService {
             throw new HEException(INSTITUTION_PROFILE_ALREADY_EXISTS, institutionId);
         }
         
-        institutionProfileDto.setNumMembers(institution.getMembers() == null ? 0 : institution.getMembers().size());
+        int numMembers = institution.getMembers() == null ? 0 : institution.getMembers().size();
+        institutionProfileDto.setNumMembers(numMembers);
         institutionProfileDto.setNumAssessments(assessmentRepository.countAssessmentsByInstitutionId(institutionId));
         institutionProfileDto.setNumActivities(activityRepository.countActivitiesByInstitutionId(institutionId));
         institutionProfileDto.setNumVolunteers(userRepository.countUniqueVolunteersByInstitution(institutionId));
