@@ -15,6 +15,8 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.theme.repository.ThemeRepo
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Member;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.repository.InstitutionProfileRepository;
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain.InstitutionProfile;
 
 import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
 
@@ -33,6 +35,8 @@ public class ActivityService {
     UserRepository userRepository;
     @Autowired
     InstitutionRepository institutionRepository;
+    @Autowired
+    InstitutionProfileRepository institutionProfileRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<ActivityDto> getActivities() {
@@ -54,7 +58,18 @@ public class ActivityService {
 
         activityRepository.save(activity);
 
+        updateInstitutionProfile(institution.getId());
+
         return new ActivityDto(activity, true);
+    }
+
+    private void updateInstitutionProfile(Integer institutionId) {
+        InstitutionProfile institutionProfile = institutionProfileRepository.findInstitutionProfileByInstitutionId(institutionId).orElse(null);
+        if (institutionProfile != null) {
+            Integer activityCount = activityRepository.countActivitiesByInstitutionId(institutionId);
+            institutionProfile.setNumActivities(activityCount);
+            institutionProfileRepository.save(institutionProfile);
+        }
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
