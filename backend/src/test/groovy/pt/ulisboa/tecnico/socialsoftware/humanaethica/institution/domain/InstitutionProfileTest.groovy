@@ -460,4 +460,41 @@ class InstitutionProfileTest extends Specification {
         then:
         result == 123
     }
+
+    def "selectAssessments handles null assessmentIds by clearing assessments"() {
+        given:
+        def institution = Mock(Institution) {
+            getAssessments() >> [Mock(Assessment), Mock(Assessment)]
+        }
+        def profile = new InstitutionProfile()
+        profile.setInstitution(institution)
+
+        when:
+        profile.selectAssessments(institution, null) // Trigger null branch
+
+        then:
+        profile.assessments.isEmpty()
+    }
+
+    def "raise INSTITUTION_PROFILE_ALREADY_EXISTS when creating a profile for an institution that already has one"() {
+        given:
+        def institutionProfileDto = new InstitutionProfileDto(
+            shortDescription: "Valid Description",
+            numMembers: 0,
+            numActivities: 0,
+            numAssessments: 5,
+            numVolunteers: 7,
+            averageRating: 4.5,
+            assessmentIds: [1, 2, 3, 4, 5]
+        )
+        def exampleInstitution = Mock(Institution)
+        def otherProfile = Mock(InstitutionProfile)
+        exampleInstitution.getProfile() >> otherProfile
+        exampleInstitution.getId() >> 1
+        when:
+        def result = new InstitutionProfile(exampleInstitution, institutionProfileDto)
+        then:
+        def exception = thrown(HEException)
+        exception.getErrorMessage() == INSTITUTION_PROFILE_ALREADY_EXISTS
+    }
 }

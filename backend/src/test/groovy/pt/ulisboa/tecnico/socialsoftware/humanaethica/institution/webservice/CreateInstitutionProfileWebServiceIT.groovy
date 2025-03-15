@@ -75,4 +75,19 @@ class CreateInstitutionProfileWebServiceIT extends SpockTest {
         cleanup:
         deleteAll()
     }
+
+    def 'unauthorized user creates institution profile'() {
+        when:
+        webClient.post()
+            .uri('/institution-profile/' + institution.id)
+            .headers(httpHeaders -> httpHeaders.putAll(headers))
+            .bodyValue(institutionProfileDto)
+            .retrieve()
+            .bodyToMono(InstitutionProfileDto.class)
+            .block()
+        
+        then:
+        def exception = thrown(WebClientResponseException)
+        exception.statusCode == HttpStatus.FORBIDDEN
+    }
 }
