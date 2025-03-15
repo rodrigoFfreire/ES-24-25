@@ -4,6 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.AccessDeniedException;
+
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.dto.InstitutionProfileDto;
 
 @RestController
@@ -19,10 +23,20 @@ public class InstitutionProfileController {
     }
 
     @PostMapping("/{institutionId}")
-    @PreAuthorize("hasRole('ROLE_MEMBER') and @securityService.isMemberOfInstitution(authentication, #institutionId)")
     public InstitutionProfileDto createInstitutionProfile(
             @PathVariable Integer institutionId,
             @RequestBody InstitutionProfileDto institutionProfileDto) {
+
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // check if the user has the 'ROLE_MEMBER' authority
+        boolean isMember = authentication.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_MEMBER"));
+
+        if (!isMember) {
+            throw new AccessDeniedException("User is not a member of this institution");
+        }
+
         return institutionProfileService.createInstitutionProfile(institutionId, institutionProfileDto);
     }
 }
