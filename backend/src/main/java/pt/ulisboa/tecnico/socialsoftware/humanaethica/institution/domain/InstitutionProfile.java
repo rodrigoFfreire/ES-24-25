@@ -72,6 +72,11 @@ public class InstitutionProfile {
     }
     
     public void selectAssessments(Institution institution, List<Integer> assessmentIds) {
+        if (assessmentIds == null) {
+            setAssessments(new ArrayList<>());
+            return;
+        }
+
         Set<Integer> validAssessmentIds = institution.getAssessments().stream()
                 .map(Assessment::getId)
                 .collect(Collectors.toSet());
@@ -87,6 +92,7 @@ public class InstitutionProfile {
         setAssessments(selectedAssessments);
         verifySelectedAssessments();
     }
+
 
     public void verifyInvariants() {
         verifyDescriptionLength();
@@ -205,12 +211,6 @@ public class InstitutionProfile {
 
     public void deleteAssessment(Assessment assessment) {
         this.assessments.remove(assessment);
-    }
-
-    public void delete() {
-        for (Assessment assessment : this.assessments) {
-            deleteAssessment(assessment);
-        }
     }
 }
 

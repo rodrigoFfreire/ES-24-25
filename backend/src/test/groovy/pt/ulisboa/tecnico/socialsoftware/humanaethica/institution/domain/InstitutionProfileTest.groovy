@@ -2,7 +2,9 @@ package pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.domain
 
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.institution.dto.InstitutionProfileDto
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.assessment.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.HEException
+import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer
 import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*
 
 import spock.lang.Specification
@@ -293,5 +295,169 @@ class InstitutionProfileTest extends Specification {
         profile.getNumAssessments() == 15
         profile.getNumVolunteers() == 20
         profile.getAverageRating() == 4.7f
+    }
+
+    def "InstitutionProfileDto empty constructor initializes fields to defaults"() {
+        when:
+        def dto = new InstitutionProfileDto()
+
+        then:
+        dto.id == null
+        dto.shortDescription == null
+        dto.numMembers == 0
+        dto.numActivities == 0
+        dto.numAssessments == 0
+        dto.numVolunteers == 0
+        dto.averageRating == 0.0f
+        dto.assessmentIds == []
+        dto.assessments == []
+    }
+
+    def "InstitutionProfileDto constructor with params initializes shortDescription and assessmentIds"() {
+        given:
+        def description = "Test Desc"
+        def ids = [1, 2, 3]
+
+        when:
+        def dto = new InstitutionProfileDto(description, ids)
+
+        then:
+        dto.shortDescription == description
+        dto.assessmentIds == ids
+        dto.numMembers == 0
+        dto.assessments == []
+    }
+
+    def "InstitutionProfileDto constructor maps assessments to IDs and DTOs"() {
+        given:
+        // Create a mock Institution with ID
+        def institution = Mock(Institution)
+        institution.getId() >> 123
+        
+        // Create mock Assessment with Institution association
+        def assessment = Mock(Assessment)
+        assessment.getId() >> 5
+        assessment.getInstitution() >> institution
+        assessment.getVolunteer() >> Mock(Volunteer)
+        
+        // Setup profile mock
+        def profile = Mock(InstitutionProfile)
+        profile.getAssessments() >> [assessment]
+
+        when:
+        def dto = new InstitutionProfileDto(profile)
+
+        then:
+        dto.assessmentIds == [5]
+        dto.assessments.size() == 1
+        dto.assessments[0].class == AssessmentDto
+    }
+
+    def "InstitutionProfileDto constructor handles null assessments gracefully"() {
+        given:
+        def profile = Mock(InstitutionProfile)
+        profile.getAssessments() >> null
+
+        when:
+        def dto = new InstitutionProfileDto(profile)
+
+        then:
+        dto.assessmentIds == []
+        dto.assessments == []
+    }
+
+    def "Setters modify all DTO fields correctly"() {
+        given:
+        def dto = new InstitutionProfileDto()
+        def assessments = [new AssessmentDto()]
+
+        when:
+        dto.setId(1)
+        dto.setShortDescription("Desc")
+        dto.setNumMembers(2)
+        dto.setNumActivities(3)
+        dto.setNumAssessments(4)
+        dto.setNumVolunteers(5)
+        dto.setAverageRating(4.2f)
+        dto.setAssessmentIds([10, 20])
+        dto.setAssessments(assessments)
+
+        then:
+        dto.id == 1
+        dto.shortDescription == "Desc"
+        dto.numMembers == 2
+        dto.numActivities == 3
+        dto.numAssessments == 4
+        dto.numVolunteers == 5
+        dto.averageRating == 4.2f
+        dto.assessmentIds == [10, 20]
+        dto.assessments == assessments
+    }
+    def "InstitutionProfile constructor with Institution and DTO sets basic fields"() {
+        given:
+        def institution = Mock(Institution) {
+            getActivities() >> []
+            getMembers() >> []
+            getAssessments() >> []
+        }
+        def dto = new InstitutionProfileDto(
+            shortDescription: "Test Description", // Changed to 13 characters
+            numVolunteers: 4,
+            averageRating: 4.5f,
+            assessmentIds: []
+        )
+
+        when:
+        def profile = new InstitutionProfile(institution, dto)
+
+        then:
+        profile.shortDescription == "Test Description"
+        profile.numVolunteers == 4
+        profile.averageRating == 4.5f
+        profile.numActivities == 0  // Because activities list is empty
+        profile.numMembers == 0     // Because members list is empty
+    }
+
+    def "selectAssessments filters assessments by institution"() {
+        given:
+        def institution = Mock(Institution)
+        def profile = new InstitutionProfile()
+        def assessment1 = Mock(Assessment) { getId() >> 1 }
+        def assessment2 = Mock(Assessment) { getId() >> 2 }
+        assessment1.getInstitution() >> institution
+        assessment2.getInstitution() >> institution
+        institution.getAssessments() >> [assessment1, assessment2]
+        profile.setInstitution(institution)
+
+        when:
+        profile.selectAssessments(institution, [1])
+
+        then:
+        profile.assessments == [assessment1]
+    }
+
+    def "deleteAssessment removes assessment from profile"() {
+        given:
+        def profile = new InstitutionProfile()
+        def assessment = Mock(Assessment)
+        profile.assessments = [assessment]
+
+        when:
+        profile.deleteAssessment(assessment)
+
+        then:
+        profile.assessments.isEmpty()
+    }
+
+    def "getId returns profile ID"() {
+        given:
+        def profile = new InstitutionProfile()
+        profile.id = 123
+
+        when:
+        def result = profile.getId()
+
+        then:
+        result == 123
     }
 }

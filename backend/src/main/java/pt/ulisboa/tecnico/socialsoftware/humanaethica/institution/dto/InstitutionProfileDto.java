@@ -36,9 +36,11 @@ public class InstitutionProfileDto {
                 .map(assessment -> assessment.getId()) // Extract only IDs
                 .collect(Collectors.toList());
         }
-        this.assessmentDto = institutionProfile.getAssessments().stream()
-            .map(assessment -> new AssessmentDto(assessment))
-            .toList();
+        if (institutionProfile.getAssessments() != null) {
+            this.assessmentDto = institutionProfile.getAssessments().stream()
+                .map(assessment -> new AssessmentDto(assessment))
+                .toList();
+        }
     }
 
     public InstitutionProfileDto(String shortDescription, List<Integer> assessmentIds) {
