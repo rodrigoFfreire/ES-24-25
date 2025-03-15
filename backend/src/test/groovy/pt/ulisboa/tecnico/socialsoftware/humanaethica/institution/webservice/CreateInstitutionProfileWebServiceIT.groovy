@@ -27,14 +27,11 @@ class CreateInstitutionProfileWebServiceIT extends SpockTest {
         headers = new HttpHeaders()
         headers.setContentType(MediaType.APPLICATION_JSON)
         
-        // Create institution
         institution = createInstitution("Test Institution", "test@institution.com", "123456789")
         
-        // Create a member that belongs to this institution
         member = createMember(USER_1_NAME, USER_1_USERNAME, USER_1_PASSWORD, USER_1_EMAIL, 
                 AuthUser.Type.NORMAL, institution, User.State.APPROVED)
         
-        // Create institution profile DTO
         institutionProfileDto = new InstitutionProfileDto(
                 shortDescription: "Valid Description",
         )
@@ -42,7 +39,6 @@ class CreateInstitutionProfileWebServiceIT extends SpockTest {
     
     def 'member creates institution profile successfully'() {
         given:
-        // Login with the created member instead of using demoMemberLogin
         normalUserLogin(USER_1_USERNAME, USER_1_PASSWORD)
         
         when:
