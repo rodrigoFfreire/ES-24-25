@@ -198,6 +198,7 @@ public class Institution {
 
     public void deleteAssessment(Assessment assessment) {
         this.assessments.remove(assessment);
+        this.profile.deleteAssessment(assessment);
     }
 
     public List<ActivitySuggestion> getActivitySuggestions() {

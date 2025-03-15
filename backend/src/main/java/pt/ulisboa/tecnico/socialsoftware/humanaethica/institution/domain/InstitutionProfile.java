@@ -39,11 +39,13 @@ public class InstitutionProfile {
     @Column(name = "num_volunteers")
     private int numVolunteers;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Assessment> assessments = new ArrayList<>();
 
     @Column(name = "average_rating")
     private float averageRating;
+
+
 
     public InstitutionProfile() {}
 
@@ -59,7 +61,7 @@ public class InstitutionProfile {
         this.institution = institution;
         setShortDescription(institutionProfileDto.getShortDescription());
         setNumActivities(institution.getActivities().size());
-        validateAndSelectAssessments(institution, institutionProfileDto.getAssessmentIds());
+        selectAssessments(institution, institutionProfileDto.getAssessmentIds());
         setNumAssessments(institution.getAssessments().size());
         setNumMembers(institution.getMembers().size());
         setNumVolunteers(institutionProfileDto.getNumVolunteers());
@@ -69,7 +71,12 @@ public class InstitutionProfile {
         verifyInvariants();
     }
     
-    private void validateAndSelectAssessments(Institution institution, List<Integer> assessmentIds) {
+    public void selectAssessments(Institution institution, List<Integer> assessmentIds) {
+        if (assessmentIds == null) {
+            setAssessments(new ArrayList<>());
+            return;
+        }
+
         Set<Integer> validAssessmentIds = institution.getAssessments().stream()
                 .map(Assessment::getId)
                 .collect(Collectors.toSet());
@@ -82,9 +89,10 @@ public class InstitutionProfile {
                 .filter(assessment -> assessmentIds.contains(assessment.getId()))
                 .collect(Collectors.toList());
 
-        this.assessments = selectedAssessments;
+        setAssessments(selectedAssessments);
         verifySelectedAssessments();
     }
+
 
     public void verifyInvariants() {
         verifyDescriptionLength();
@@ -132,13 +140,8 @@ public class InstitutionProfile {
         }
     }
     
-
     public Integer getId() {
         return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Institution getInstitution() {
@@ -147,6 +150,7 @@ public class InstitutionProfile {
 
     public void setInstitution(Institution institution) {
         this.institution = institution;
+        this.institution.setProfile(this);
     }
 
     public String getShortDescription() {
@@ -201,15 +205,11 @@ public class InstitutionProfile {
         return assessments;
     }
 
-    public void setAssessments(List<Assessment> assessments) {
+    private void setAssessments(List<Assessment> assessments) {
         this.assessments = assessments;
     }
 
-    public void addAssessment(Assessment assessment) {
-        this.assessments.add(assessment);
-    }
-
-    public void removeAssessment(Assessment assessment) {
+    public void deleteAssessment(Assessment assessment) {
         this.assessments.remove(assessment);
     }
 }
