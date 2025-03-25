@@ -1,7 +1,13 @@
 <template>
   <div class="container">
-    <!-- TODO: Add creation button here (only if there is no profile) -->
-    <div>
+    <div v-if="!profile">
+      <h1 class="mb-4">Volunteer Profile</h1>
+      <p class="mb-8">
+        No volunteer profile found. Click the button below to create a new one!
+      </p>
+      <v-btn color="blue" @click="openDialog"> Create My Profile</v-btn>
+    </div>
+    <div v-else>
       <h1>Volunteer: SHOW VOLUNTEER NAME HERE</h1>
       <div class="text-description">
         <p><strong>Short Bio: </strong> SHOW SHORT BIO HERE</p>
@@ -59,17 +65,17 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import RemoteServices from "@/services/RemoteServices";
-import Participation from "@/models/participation/Participation";
-import Activity from "@/models/activity/Activity";
+import RemoteServices from '@/services/RemoteServices';
+import Participation from '@/models/participation/Participation';
+import Activity from '@/models/activity/Activity';
+import VolunteerProfile from '@/models/profile/VolunteerProfile';
 
-@Component({
-  components: {
-  }
-})
+@Component
 export default class VolunteerProfileView extends Vue {
   userId: number = 0;
+  showDialog: boolean = false;
 
+  profile: VolunteerProfile | null = null;
   activities: Activity[] = [];
 
   search: string = '';
@@ -97,7 +103,7 @@ export default class VolunteerProfileView extends Vue {
       value: 'memberReview',
       align: 'left',
       width: '40%',
-    }
+    },
   ];
 
   async created() {
@@ -114,20 +120,29 @@ export default class VolunteerProfileView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
+  openDialog() {
+    this.showDialog = true;
+  }
+
+  closeDialog() {
+    this.showDialog = false;
+  }
+
   activityName(participation: Participation) {
-    return this.activities.find(activity => activity.id == participation.activityId)?.name;
+    return this.activities.find(
+      (activity) => activity.id == participation.activityId,
+    )?.name;
   }
 
   institutionName(participation: Participation) {
-    let activity = this.activities.find(activity => activity.id == participation.activityId);
+    let activity = this.activities.find(
+      (activity) => activity.id == participation.activityId,
+    );
     return activity?.institution.name;
   }
 
   getMemberRating(participation: Participation): string {
-    if (
-      !participation ||
-      participation.memberRating == null
-    ) {
+    if (!participation || participation.memberRating == null) {
       return '';
     }
     return this.convertToStars(participation.memberRating);
