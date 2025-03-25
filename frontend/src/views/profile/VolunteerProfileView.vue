@@ -1,35 +1,58 @@
 <template>
   <div class="container">
     <div v-if="!profile">
-      <h1 class="mb-4">Volunteer Profile</h1>
+      <h1 class="mb-2">Volunteer Profile</h1>
       <p class="mb-8">
         No volunteer profile found. Click the button below to create a new one!
       </p>
       <v-btn color="blue" @click="openDialog"> Create My Profile</v-btn>
     </div>
     <div v-else>
-      <h1>Volunteer: SHOW VOLUNTEER NAME HERE</h1>
+      <h1>Volunteer: {{ profile?.volunteer?.name }}</h1>
       <div class="text-description">
-        <p><strong>Short Bio: </strong> SHOW SHORT BIO HERE</p>
+        <p><strong>Short Bio: </strong> {{ profile.shortBio }}</p>
       </div>
       <div class="stats-container">
-        <div class="items">
-          <div ref="volunteerId" class="icon-wrapper">
-            <span>42</span>
+        <div ref="volunteerId" class="items">
+          <div class="icon-wrapper">
+            <span>{{ profile.numTotalEnrollments }}</span>
           </div>
           <div class="project-name">
             <p>Total Enrollments</p>
           </div>
         </div>
-        <!-- TODO: Change 42 above and add other fields here -->
+        <div ref="volunteerId" class="items">
+          <div class="icon-wrapper">
+            <span>{{ profile.numTotalParticipations }}</span>
+          </div>
+          <div class="project-name">
+            <p>Total Participations</p>
+          </div>
+        </div>
+        <div ref="volunteerId" class="items">
+          <div class="icon-wrapper">
+            <span>{{ profile.numTotalAssessments }}</span>
+          </div>
+          <div class="project-name">
+            <p>Total Assessments</p>
+          </div>
+        </div>
+        <div ref="volunteerId" class="items">
+          <div class="icon-wrapper">
+            <span>{{ profile.averageRating.toFixed(2) }}</span>
+          </div>
+          <div class="project-name">
+            <p>Average Rating</p>
+          </div>
+        </div>
       </div>
-
       <div>
         <h2>Selected Participations</h2>
         <div>
           <v-card class="table">
             <v-data-table
               :headers="headers"
+              :items="profile.selectedParticipations"
               :search="search"
               disable-pagination
               :hide-default-footer="true"
@@ -60,6 +83,15 @@
         </div>
       </div>
     </div>
+    <volunteer-profile-dialog
+      v-model="showDialog"
+      :activities="activities"
+      :activity-name="activityName"
+      :institution-name="institutionName"
+      :get-member-rating="getMemberRating"
+      @volunteer-profile:close="closeDialog"
+      @volunteer-profile:create="handleProfileCreated"
+    />
   </div>
 </template>
 
@@ -69,8 +101,11 @@ import RemoteServices from '@/services/RemoteServices';
 import Participation from '@/models/participation/Participation';
 import Activity from '@/models/activity/Activity';
 import VolunteerProfile from '@/models/profile/VolunteerProfile';
+import VolunteerProfileDialog from '@/views/profile/VolunteerProfileDialog.vue';
 
-@Component
+@Component({
+  components: { VolunteerProfileDialog },
+})
 export default class VolunteerProfileView extends Vue {
   userId: number = 0;
   showDialog: boolean = false;
@@ -112,8 +147,7 @@ export default class VolunteerProfileView extends Vue {
     try {
       this.userId = Number(this.$route.params.id);
       this.activities = await RemoteServices.getActivities();
-
-      // TODO
+      this.profile = await RemoteServices.getVolunteerProfile(this.userId);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -126,6 +160,11 @@ export default class VolunteerProfileView extends Vue {
 
   closeDialog() {
     this.showDialog = false;
+  }
+
+  handleProfileCreated(newProfile: VolunteerProfile) {
+    this.profile = newProfile;
+    this.closeDialog();
   }
 
   activityName(participation: Participation) {
