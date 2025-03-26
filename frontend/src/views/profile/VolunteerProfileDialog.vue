@@ -34,7 +34,7 @@
           show-select
           :hide-default-footer="true"
           :mobile-breakpoint="0"
-          data-cy="selectedParticipationsTable"
+          data-cy="pickParticipationsTable"
         >
           <template v-slot:item.activityName="{ item }">
             {{ activityName(item) }}
@@ -62,7 +62,12 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn @click="$emit('volunteer-profile:close')"> Close </v-btn>
-        <v-btn v-if="!!newProfile.shortBio" @click="saveProfile">Save </v-btn>
+        <v-btn
+          data-cy="saveVolunteerProfileBtn"
+          v-if="!!newProfile.shortBio"
+          @click="saveProfile"
+          >Save
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

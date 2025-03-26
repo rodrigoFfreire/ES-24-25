@@ -5,7 +5,13 @@
       <p class="mb-8">
         No volunteer profile found. Click the button below to create a new one!
       </p>
-      <v-btn color="blue" @click="openDialog"> Create My Profile</v-btn>
+      <v-btn
+        color="blue"
+        data-cy="createVolunteerProfileBtn"
+        @click="openDialog"
+      >
+        Create My Profile</v-btn
+      >
     </div>
     <div v-else>
       <h1>Volunteer: {{ profile?.volunteer?.name }}</h1>
@@ -13,7 +19,7 @@
         <p><strong>Short Bio: </strong> {{ profile.shortBio }}</p>
       </div>
       <div class="stats-container">
-        <div ref="volunteerId" class="items">
+        <div class="items">
           <div class="icon-wrapper">
             <span>{{ profile.numTotalEnrollments }}</span>
           </div>
@@ -21,15 +27,15 @@
             <p>Total Enrollments</p>
           </div>
         </div>
-        <div ref="volunteerId" class="items">
-          <div class="icon-wrapper">
+        <div class="items">
+          <div class="icon-wrapper" data-cy="totalParticipationsStat">
             <span>{{ profile.numTotalParticipations }}</span>
           </div>
           <div class="project-name">
             <p>Total Participations</p>
           </div>
         </div>
-        <div ref="volunteerId" class="items">
+        <div class="items">
           <div class="icon-wrapper">
             <span>{{ profile.numTotalAssessments }}</span>
           </div>
@@ -37,7 +43,7 @@
             <p>Total Assessments</p>
           </div>
         </div>
-        <div ref="volunteerId" class="items">
+        <div class="items">
           <div class="icon-wrapper">
             <span>{{ profile.averageRating.toFixed(2) }}</span>
           </div>
@@ -57,6 +63,7 @@
               disable-pagination
               :hide-default-footer="true"
               :mobile-breakpoint="0"
+              data-cy="selectedParticipationsTable"
             >
               <template v-slot:item.activityName="{ item }">
                 {{ activityName(item) }}
