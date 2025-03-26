@@ -11,6 +11,9 @@ describe('VolunteerProfile', () => {
 
   it('Create volunteer profile', () => {
     const SHORT_BIO = "This is a short bio!";
+    const TOTAL_PARTICIPATIONS = 4;
+    const ACTIVITY1 = "A1";
+    const ACTIVITY3 = "A3";
 
     cy.demoVolunteerLogin()
 
@@ -49,7 +52,21 @@ describe('VolunteerProfile', () => {
     cy.wait('@saveProfile')
     cy.wait(500)
 
-    // TODO - Confirm participation list and statistic after creating profile
+    // Confirm Total Participations stat
+    cy.get('[data-cy="totalParticipationsStat"] span')
+      .should('have.text', TOTAL_PARTICIPATIONS.toString())
+
+    // Confirm selected participations are in the table
+    cy.get('[data-cy="selectedParticipationsTable"] tbody tr')
+      .should('have.length', 2)
+      .eq(0)
+      .find('td').first()
+      .should('contain', ACTIVITY1);
+
+    cy.get('[data-cy="selectedParticipationsTable"] tbody tr')
+      .eq(1)
+      .find('td').first()
+      .should('contain', ACTIVITY3);
 
     // TODO - Log out and visit as unauth'd user the profiles list and confirm its there
   })
