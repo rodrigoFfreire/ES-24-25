@@ -91,6 +91,7 @@
       </div>
     </div>
     <volunteer-profile-dialog
+      v-if="showDialog"
       v-model="showDialog"
       :activities="activities"
       :activity-name="activityName"
