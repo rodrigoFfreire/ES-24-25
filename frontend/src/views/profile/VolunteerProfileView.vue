@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div v-if="!$store.getters.getLoading" class="container">
     <div v-if="!profile">
       <h1 class="mb-2">Volunteer Profile</h1>
       <p class="mb-8">
