@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserService;
 
 import java.security.Principal;
 import java.util.Optional;
+import java.util.List;
 
 @RestController()
 public class InstitutionProfileController {
