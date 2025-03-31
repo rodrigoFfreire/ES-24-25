@@ -15,6 +15,7 @@ import Enrollment from '@/models/enrollment/Enrollment';
 import Participation from '@/models/participation/Participation';
 import Assessment from '@/models/assessment/Assessment';
 import Report from '@/models/report/Report';
+import InstitutionProfile from '@/models/profile/InstitutionProfile';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -608,6 +609,19 @@ export default class RemoteServices {
       .put(`/participations/${participationId}/volunteer`, participation)
       .then((response) => {
         return new Participation(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // Profile Controller
+
+  static async getAllInstitutionProfiles(): Promise<InstitutionProfile[]> {
+    return httpClient
+      .get('/profile/institution/all')
+      .then((response) => {
+        return response.data.map((profile: any) => new InstitutionProfile(profile));
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
