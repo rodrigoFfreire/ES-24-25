@@ -31,4 +31,10 @@ public class InstitutionProfileController {
         int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
         return institutionProfileService.createInstitutionProfile(userService.getInstitution(userId).getId(), institutionProfileDto);
     }
+
+    @GetMapping("/profile/institution/all")
+    public List<InstitutionProfileDto> getAllInstitutionProfiles() {
+        return institutionProfileService.getAllInstitutionProfiles();
+    }
+
 }
