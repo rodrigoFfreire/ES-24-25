@@ -23,6 +23,13 @@ public class ActivitySuggestionController {
         return this.activitySuggestionService.getActivitySuggestionsByInstitution(institutionId);
     }
 
+    @GetMapping("/volunteer")
+    @PreAuthorize("hasRole('ROLE_VOLUNTEER')")
+    public List<ActivitySuggestionDto> getVolunteerActivitySuggestions(Principal principal) {
+        int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
+        return this.activitySuggestionService.getActivitySuggestionsByVolunteer(userId);
+    }
+
     @PostMapping("/institution/{institutionId}")
     @PreAuthorize("hasRole('ROLE_VOLUNTEER')")
     public ActivitySuggestionDto createActivitySuggestion(Principal principal, @PathVariable Integer institutionId, @Valid @RequestBody ActivitySuggestionDto activitySuggestionDto) {
