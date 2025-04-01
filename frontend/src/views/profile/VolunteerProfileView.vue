@@ -1,6 +1,6 @@
 <template>
-  <div v-if="!$store.getters.getLoading" class="container">
-    <div v-if="!profile">
+  <div class="container">
+    <div v-if="!profile && !$store.getters.getLoading">
       <h1 class="mb-2">Volunteer Profile</h1>
       <p class="mb-8">
         No volunteer profile found. Click the button below to create a new one!
@@ -13,7 +13,7 @@
         Create My Profile</v-btn
       >
     </div>
-    <div v-else>
+    <div v-else-if="!$store.getters.getLoading">
       <h1>Volunteer: {{ profile?.volunteer?.name }}</h1>
       <div class="text-description">
         <p><strong>Short Bio: </strong> {{ profile.shortBio }}</p>
