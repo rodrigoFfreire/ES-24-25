@@ -16,6 +16,7 @@ import Participation from '@/models/participation/Participation';
 import Assessment from '@/models/assessment/Assessment';
 import Report from '@/models/report/Report';
 import VolunteerProfile from '@/models/profile/VolunteerProfile';
+import ActivitySuggestion from '@/models/activitysuggestion/ActivitySuggestion';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -471,6 +472,35 @@ export default class RemoteServices {
       });
   }
 
+  // Suggestion controller
+
+  static async getVolunteerActivitySuggestions(): Promise<ActivitySuggestion[]> {
+    return httpClient
+      .get('/activitySuggestions/volunteer')
+      .then((response) => {
+        return response.data.map((suggestion: any) => {
+          return new ActivitySuggestion(suggestion);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+  
+  static async createActivitySuggestion(
+    institutionId: number,
+    suggestion: ActivitySuggestion,
+  ): Promise<ActivitySuggestion> {
+    return httpClient
+      .post(`/activitySuggestions/institution/${institutionId}`, suggestion)
+      .then((response) => {
+        return new ActivitySuggestion(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+  
   // Enrollment controller
 
   static async getActivityEnrollments(activityId: number) {
