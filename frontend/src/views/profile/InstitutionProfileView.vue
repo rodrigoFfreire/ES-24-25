@@ -16,33 +16,87 @@
         <p><strong>Short Description: </strong> SHOW SHORT DESCRIPTION HERE</p>
       </div>
 
+      <div class="stats-container">
+        <!-- Total Members -->
+        <div class="items">
+          <div class="icon-wrapper">
+            <span>{{ profile.totalMembers }}</span>
+          </div>
+          <div class="project-name">
+            <p>Total Members</p>
+          </div>
+        </div>
+
+        <!-- Total Activities -->
+        <div class="items">
+          <div class="icon-wrapper">
+            <span>{{ profile.totalActivities }}</span>
+          </div>
+          <div class="project-name">
+            <p>Total Activities</p>
+          </div>
+        </div>
+
+        <!-- Total Volunteers -->
+        <div class="items">
+          <div class="icon-wrapper">
+            <span>{{ profile.totalVolunteers }}</span>
+          </div>
+          <div class="project-name">
+            <p>Total Volunteers</p>
+          </div>
+        </div>
+
+        <!-- Total Assessments -->
+        <div class="items">
+          <div class="icon-wrapper">
+            <span>{{ profile.totalAssessments }}</span>
+          </div>
+          <div class="project-name">
+            <p>Total Assessments</p>
+          </div>
+        </div>
+
+        <!-- Average Rating -->
+        <div class="items">
+          <div class="icon-wrapper">
+            <span>{{ profile.averageRating.toFixed(2) }}</span>
+          </div>
+          <div class="project-name">
+            <p>Average Rating</p>
+          </div>
+        </div>
+      </div>
+
       <div>
         <h2>Selected Assessments</h2>
-        <v-card class="table">
-          <v-data-table
-            :headers="headers"
-            :search="search"
-            disable-pagination
-            :hide-default-footer="true"
-            :mobile-breakpoint="0"
-            data-cy="institutionAssessmentsTable"
-          >
-            <template v-slot:item.reviewDate="{ item }">
-              {{ ISOtoString(item.reviewDate) }}
-            </template>
-            <template v-slot:top>
-              <v-card-title>
-                <v-text-field
-                  v-model="search"
-                  append-icon="search"
-                  label="Search"
-                  class="mx-2"
-                />
-                <v-spacer />
-              </v-card-title>
-            </template>
-          </v-data-table>
-        </v-card>
+        <div>
+          <v-card class="table">
+            <v-data-table
+              :headers="headers"
+              :search="search"
+              disable-pagination
+              :hide-default-footer="true"
+              :mobile-breakpoint="0"
+              data-cy="institutionAssessmentsTable"
+            >
+              <template v-slot:item.reviewDate="{ item }">
+                {{ ISOtoString(item.reviewDate) }}
+              </template>
+              <template v-slot:top>
+                <v-card-title>
+                  <v-text-field
+                    v-model="search"
+                    append-icon="search"
+                    label="Search"
+                    class="mx-2"
+                  />
+                  <v-spacer />
+                </v-card-title>
+              </template>
+            </v-data-table>
+          </v-card>
+        </div>
       </div>
     </div>
   </div>
