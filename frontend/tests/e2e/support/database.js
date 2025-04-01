@@ -11,7 +11,7 @@ const USER_COLUMNS = "users (user_type, id, creation_date, name, role, state, in
 const AUTH_USERS_COLUMNS = "auth_users (auth_type, id, active, email, username, user_id)";
 const ACTIVITY_COLUMNS = "activity (id, application_deadline, creation_date, description, ending_date, name, participants_number_limit, region, starting_date, state, institution_id)";
 const ENROLLMENT_COLUMNS = "enrollment (id, enrollment_date_time, motivation, activity_id, volunteer_id)"
-const PARTICIPATION_COLUMNS = "participation (id, acceptance_date, member_rating, activity_id, volunteer_id)"
+const PARTICIPATION_COLUMNS = "participation (id, acceptance_date, member_rating, member_review, volunteer_rating, volunteer_review, activity_id, volunteer_id)"
 const ASSESSMENT_COLUMNS = "assessment (id, review, review_date, institution_id, volunteer_id)";
 const REPORT_COLUMNS = "report (id, justification, activity_id, volunteer_id)";
 
@@ -25,6 +25,8 @@ const yesterday = new Date(now);
 yesterday.setDate(now.getDate() - 1);
 const dayBeforeYesterday = new Date(now);
 dayBeforeYesterday.setDate(now.getDate() - 2);
+const twoDaysBeforeYesterday = new Date(now);
+twoDaysBeforeYesterday.setDate(now.getDate() - 3);
 
 Cypress.Commands.add('deleteAllButArs', () => {
   cy.task('queryDatabase', {
@@ -46,6 +48,10 @@ Cypress.Commands.add('deleteAllButArs', () => {
   cy.task('queryDatabase', {
     query: "DELETE FROM ACTIVITY",
     credentials: credentials,
+  })
+  cy.task('queryDatabase', {
+    query: "DELETE FROM VOLUNTEER_PROFILE",
+    credentials: credentials
   })
   cy.task('queryDatabase', {
     query: "DELETE FROM AUTH_USERS WHERE NOT (username = 'ars')",
@@ -172,11 +178,11 @@ Cypress.Commands.add('createDatabaseInfoForParticipations', () => {
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
-    query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(5, 1, 4),
+    query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(5, "", 1, 4),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
-    query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(6, 2, 3),
+    query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(6, "", 2, 3),
     credentials: credentials,
   })
 });
@@ -233,15 +239,15 @@ Cypress.Commands.add('createDatabaseInfoForAssessments', () => {
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
-    query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(1, 1, 3),
+    query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(1, "", 1, 3),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
-    query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(2, 2, 3),
+    query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(2, "", 2, 3),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
-    query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(3, 6, 3),
+    query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(3, "", 6, 3),
     credentials: credentials,
   })
 });
@@ -254,7 +260,6 @@ Cypress.Commands.add('createDatabaseInfoForVolunteerAssessments', () => {
 });
 
 Cypress.Commands.add('createDatabaseInfoForVolunteerProfile', () => {
-
   // Activties (5)
   cy.task('queryDatabase', {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(1, "A1", "Activity 1 Description",
@@ -327,7 +332,7 @@ Cypress.Commands.add('createDatabaseInfoForVolunteerProfile', () => {
     query: "INSERT INTO " + ASSESSMENT_COLUMNS + generateAssessmentTuple(1, "Foi Muito bom!", 1, 3),
     credentials: credentials,
   })
-});
+})
 
 function generateAuthUserTuple(id, authType, username, userId) {
   return "VALUES ('"
@@ -374,9 +379,10 @@ function generateEnrollmentTuple(id, activityId, volunteerId) {
       + volunteerId + ")";
 }
 
-function generateParticipationTuple(id, activityId, volunteerId) {
+function generateParticipationTuple(id, memberReview, activityId, volunteerId) {
   return "VALUES ("
-      + id + ", '2024-02-06 18:51:37.595713', '5', " +
+      + id + ", '2024-02-06 18:51:37.595713', 5, '" +
+      memberReview + "', 5, 'Foi uma otima experiencia', " +
       activityId + ", " +
       volunteerId + ")";
 }
