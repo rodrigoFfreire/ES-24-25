@@ -26,12 +26,11 @@ describe('VolunteerProfile', () => {
     cy.get('[data-cy="profiles"]').click()
     cy.get('[data-cy="volunteer-profile"]').click()
     cy.wait('@volunteerActivities')
-    cy.wait('@volunteerParticipations')
     cy.wait('@volunteerProfile')
 
     // Click CREATE MY PROFILE and wait for dialog to open
     cy.get('[data-cy="createVolunteerProfileBtn"]').click()
-    cy.wait(500)
+    cy.wait('@volunteerParticipations')
 
     // Fill form
     cy.get('[data-cy="shortBioInput"]').type(SHORT_BIO);
