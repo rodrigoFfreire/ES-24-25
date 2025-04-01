@@ -1,52 +1,48 @@
 <template>
   <div class="container">
-    <!-- TODO: Add creation button here (only if there is no profile) -->
-    <div>
+    <!-- in case theres no porifle, show button -->
+    <div v-if="!hasProfile">
+      <h1 class="mb-4">Institution Profile</h1>
+      <p class="mb-8">
+        No institution profile found. Click the button below to create a new one!
+      </p>
+      <v-btn color="blue" @click="openDialog">Create Institution Profile</v-btn>
+    </div>
+
+    <!-- in case theres a profile, show info (TODO)-->
+    <div v-else>
       <h1>Institution: SHOW INSTITUTION NAME HERE</h1>
       <div class="text-description">
         <p><strong>Short Description: </strong> SHOW SHORT DESCRIPTION HERE</p>
       </div>
-      <div class="stats-container">
-        <div class="items">
-          <div ref="institutionId" class="icon-wrapper">
-            <span>42</span>
-          </div>
-          <div class="project-name">
-            <p>Total Members</p>
-          </div>
-        </div>
-        <!-- TODO: Change 42 above and add other fields here -->
-     </div>
 
       <div>
         <h2>Selected Assessments</h2>
-        <div>
-          <v-card class="table">
-            <v-data-table
-              :headers="headers"
-              :search="search"
-              disable-pagination
-              :hide-default-footer="true"
-              :mobile-breakpoint="0"
-              data-cy="institutionAssessmentsTable"
-            >
-              <template v-slot:item.reviewDate="{ item }">
-                {{ ISOtoString(item.reviewDate) }}
-              </template>
-              <template v-slot:top>
-                <v-card-title>
-                  <v-text-field
-                    v-model="search"
-                    append-icon="search"
-                    label="Search"
-                    class="mx-2"
-                  />
-                  <v-spacer />
-                </v-card-title>
-              </template>
-            </v-data-table>
-          </v-card>
-        </div>
+        <v-card class="table">
+          <v-data-table
+            :headers="headers"
+            :search="search"
+            disable-pagination
+            :hide-default-footer="true"
+            :mobile-breakpoint="0"
+            data-cy="institutionAssessmentsTable"
+          >
+            <template v-slot:item.reviewDate="{ item }">
+              {{ ISOtoString(item.reviewDate) }}
+            </template>
+            <template v-slot:top>
+              <v-card-title>
+                <v-text-field
+                  v-model="search"
+                  append-icon="search"
+                  label="Search"
+                  class="mx-2"
+                />
+                <v-spacer />
+              </v-card-title>
+            </template>
+          </v-data-table>
+        </v-card>
       </div>
     </div>
   </div>
@@ -54,7 +50,9 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
 import { ISOtoString } from "../../services/ConvertDateService";
+import InstitutionProfile from '@/models/profile/InstitutionProfile';
 
 @Component({
   methods: { ISOtoString },
@@ -63,8 +61,10 @@ import { ISOtoString } from "../../services/ConvertDateService";
 })
 export default class InstitutionProfileView extends Vue {
   institutionId: number = 0;
-
+  profile: InstitutionProfile | null = null;
   search: string = '';
+  showDialog: boolean = false;
+
   headers: object = [
     {
       text: 'Volunteer Name',
@@ -91,12 +91,25 @@ export default class InstitutionProfileView extends Vue {
 
     try {
       this.institutionId = Number(this.$route.params.id);
-
-      // TODO
+      this.profile = await RemoteServices.getInstitutionProfile(this.institutionId);
+      console.log('Profile returned:', this.profile);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  get hasProfile() {
+    const desc = this.profile?.shortDescription;
+    return desc !== undefined && desc !== null && desc.trim() !== '';
+  }
+
+  openDialog() {
+    this.showDialog = true;
+  }
+
+  closeDialog() {
+    this.showDialog = false;
   }
 }
 </script>

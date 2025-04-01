@@ -628,6 +628,17 @@ export default class RemoteServices {
       });
   }
 
+  static async getInstitutionProfile(id: number): Promise<InstitutionProfile> {
+    return httpClient
+      .get(`/profile/institution/${id}`)
+      .then((response) => {
+        return new InstitutionProfile(response.data); // assumes you have a model
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+  
   // Assessment Controller
 
   static async getVolunteerAssessments(): Promise<Assessment[]> {
