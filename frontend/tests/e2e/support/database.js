@@ -87,17 +87,17 @@ Cypress.Commands.add('createDemoEntities', () => {
 Cypress.Commands.add('createDatabaseInfoForEnrollments', () => {
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(1, "A1", "Enrollment is open",  tomorrow.toISOString(), tomorrow.toISOString(),
-      tomorrow.toISOString(),1, 1),
+        tomorrow.toISOString(),1, 1),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(2, "A2", "Enrollment is open and it is already enrolled",  tomorrow.toISOString(), tomorrow.toISOString(),
-      tomorrow.toISOString(),1, 1),
+        tomorrow.toISOString(),1, 1),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(3, "A3", "Enrollment is closed",  yesterday.toISOString(), tomorrow.toISOString(),
-      tomorrow.toISOString(),1, 1),
+        tomorrow.toISOString(),1, 1),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
@@ -109,17 +109,17 @@ Cypress.Commands.add('createDatabaseInfoForEnrollments', () => {
 Cypress.Commands.add('createDatabaseInfoForReports', () => {
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(1, "A1", "Enrollment is open",  tomorrow.toISOString(), tomorrow.toISOString(),
-      tomorrow.toISOString(),1, 1),
+        tomorrow.toISOString(),1, 1),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(2, "A2", "Enrollment is open and it is already enrolled",  tomorrow.toISOString(), tomorrow.toISOString(),
-      tomorrow.toISOString(),1, 1),
+        tomorrow.toISOString(),1, 1),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(3, "A3", "Enrollment is closed",  yesterday.toISOString(), tomorrow.toISOString(),
-      tomorrow.toISOString(),1, 1),
+        tomorrow.toISOString(),1, 1),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
@@ -147,12 +147,12 @@ Cypress.Commands.add('createDatabaseInfoForParticipations', () => {
   })
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(1, "A1", "Has vacancies",  dayBeforeYesterday.toISOString(), yesterday.toISOString(),
-      yesterday.toISOString(),2, 1),
+        yesterday.toISOString(),2, 1),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(2, "A2", "Has no vacancies",  dayBeforeYesterday.toISOString(), yesterday.toISOString(),
-      yesterday.toISOString(),1, 1),
+        yesterday.toISOString(),1, 1),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
@@ -188,32 +188,32 @@ Cypress.Commands.add('createDatabaseInfoForAssessments', () => {
   })
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(1, "A1", "Same institution is enrolled and participates", dayBeforeYesterday.toISOString(), yesterday.toISOString(),
-      yesterday.toISOString(),1, 1),
+        yesterday.toISOString(),1, 1),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(2, "A2", "Same institution is enrolled and participates",  dayBeforeYesterday.toISOString(), yesterday.toISOString(),
-      yesterday.toISOString(),2, 1),
+        yesterday.toISOString(),2, 1),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(3, "A3", "Same institution is enrolled and does not participate",  dayBeforeYesterday.toISOString(), yesterday.toISOString(),
-      yesterday.toISOString(),3, 1),
+        yesterday.toISOString(),3, 1),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(4, "A4", "Same institution is not enrolled",  dayBeforeYesterday.toISOString(), yesterday.toISOString(),
-      yesterday.toISOString(),3, 1),
+        yesterday.toISOString(),3, 1),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(5, "A5", "Same institution before end date",  dayBeforeYesterday.toISOString(), yesterday.toISOString(),
-      tomorrow.toISOString(),3, 1),
+        tomorrow.toISOString(),3, 1),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
     query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(6, "A6", "Other institution is enrolled and participates",  dayBeforeYesterday.toISOString(), yesterday.toISOString(),
-      yesterday.toISOString(),3, 2),
+        yesterday.toISOString(),3, 2),
     credentials: credentials,
   })
   cy.task('queryDatabase',  {
@@ -253,56 +253,132 @@ Cypress.Commands.add('createDatabaseInfoForVolunteerAssessments', () => {
   })
 });
 
+Cypress.Commands.add('createDatabaseInfoForVolunteerProfile', () => {
+
+  // Activties (5)
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(1, "A1", "Activity 1 Description",
+        dayBeforeYesterday.toISOString(), yesterday.toISOString(), yesterday.toISOString(), 1, 1),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(2, "A2", "Activity 2 Description",
+        dayBeforeYesterday.toISOString(), yesterday.toISOString(), yesterday.toISOString(), 2, 1),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(3, "A3", "Activity 3 Description",
+        dayBeforeYesterday.toISOString(), yesterday.toISOString(), yesterday.toISOString(), 3, 1),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(4, "A4", "Activity 4 Description",
+        dayBeforeYesterday.toISOString(), yesterday.toISOString(), yesterday.toISOString(), 2, 1),
+    credentials: credentials,
+  })
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(5, "A5", "Activity 5 Description",
+        dayBeforeYesterday.toISOString(), yesterday.toISOString(), tomorrow.toISOString(), 1, 1),
+    credentials: credentials,
+  })
+
+  // Enrollments (5)
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + ENROLLMENT_COLUMNS + generateEnrollmentTuple(1, 1, 3),
+    credentials: credentials
+  })
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + ENROLLMENT_COLUMNS + generateEnrollmentTuple(2, 2, 3),
+    credentials: credentials
+  })
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + ENROLLMENT_COLUMNS + generateEnrollmentTuple(3, 3, 3),
+    credentials: credentials
+  })
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + ENROLLMENT_COLUMNS + generateEnrollmentTuple(4, 4, 3),
+    credentials: credentials
+  })
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + ENROLLMENT_COLUMNS + generateEnrollmentTuple(5, 5, 3),
+    credentials: credentials
+  })
+
+  // Participations (4)
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(1, "Very Good job!", 1, 3),
+    credentials: credentials
+  })
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(2, "Very Good job!", 2, 3),
+    credentials: credentials
+  })
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(3, "Very Good job!", 3, 3),
+    credentials: credentials
+  })
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(4, "", 5, 3),
+    credentials: credentials
+  })
+
+  // Assessments (1)
+  cy.task('queryDatabase',  {
+    query: "INSERT INTO " + ASSESSMENT_COLUMNS + generateAssessmentTuple(1, "Foi Muito bom!", 1, 3),
+    credentials: credentials,
+  })
+});
+
 function generateAuthUserTuple(id, authType, username, userId) {
   return "VALUES ('"
-    + authType + "', '"
-    + id + "', 't', 'demo_member@mail.com','"
-    + username + "', '"
-    + userId + "')"
+      + authType + "', '"
+      + id + "', 't', 'demo_member@mail.com','"
+      + username + "', '"
+      + userId + "')"
 }
 
 function generateUserTuple(id, userType, name, role, institutionId) {
   return "VALUES ('"
-    + userType + "', '"
-    + id + "', '2022-02-06 17:58:21.419878', '"
-    + name + "', '"
-    + role + "', 'ACTIVE', "
-    + institutionId + ")";
+      + userType + "', '"
+      + id + "', '2022-02-06 17:58:21.419878', '"
+      + name + "', '"
+      + role + "', 'ACTIVE', "
+      + institutionId + ")";
 }
 
 function generateInstitutionTuple(id, name, nif) {
   return "VALUES ('"
-    + id + "', 't', 'abca428c09862e89', '2022-08-06 17:58:21.402146','demo_institution@mail.com', '" +
-    name + "', '" +
-    nif + "', '2024-02-06 17:58:21.402134')";
+      + id + "', 't', 'abca428c09862e89', '2022-08-06 17:58:21.402146','demo_institution@mail.com', '" +
+      name + "', '" +
+      nif + "', '2024-02-06 17:58:21.402134')";
 }
 
 function generateActivityTuple(id, name, description, deadline, start, end, participants, institutionId) {
   return "VALUES ('"
-    + id + "', '"
-    + deadline +
-    "', '2022-08-06 17:58:21.402146', '" +
-    description + "', '"
-    + end + "', '"
-    + name + "', '" +
-    participants +
-    "', 'Lisbon',  '"
-    + start + "', 'APPROVED', " +
-    institutionId + ")";
+      + id + "', '"
+      + deadline +
+      "', '2022-08-06 17:58:21.402146', '" +
+      description + "', '"
+      + end + "', '"
+      + name + "', '" +
+      participants +
+      "', 'Lisbon',  '"
+      + start + "', 'APPROVED', " +
+      institutionId + ")";
 }
 
 function generateEnrollmentTuple(id, activityId, volunteerId) {
   return "VALUES ("
-    + id + ", '2022-08-06 17:58:21.402146', 'sql-inserted-motivation', "
-    + activityId + ", "
-    + volunteerId + ")";
+      + id + ", '2022-08-06 17:58:21.402146', 'sql-inserted-motivation', "
+      + activityId + ", "
+      + volunteerId + ")";
 }
 
 function generateParticipationTuple(id, activityId, volunteerId) {
   return "VALUES ("
-    + id + ", '2024-02-06 18:51:37.595713', '5', " +
-    activityId + ", " +
-    volunteerId + ")";
+      + id + ", '2024-02-06 18:51:37.595713', '5', " +
+      activityId + ", " +
+      volunteerId + ")";
 }
 
 function generateAssessmentTuple(id, review, institutionId, volunteerId) {
