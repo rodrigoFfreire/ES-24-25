@@ -36,13 +36,13 @@ describe('VolunteerProfile', () => {
     cy.get('[data-cy="shortBioInput"]').type(SHORT_BIO);
 
     cy.get('[data-cy="pickParticipationsTable"] tbody tr')
-      .eq(0) // First row (A1)
-      .find('.v-data-table__checkbox .v-input--selection-controls__input')
-      .click({ force: true })
+        .eq(0) // First row (A1)
+        .find('.v-data-table__checkbox .v-input--selection-controls__input')
+        .click({ force: true })
     cy.get('[data-cy="pickParticipationsTable"] tbody tr')
-      .eq(2) // Third row (A3)
-      .find('.v-data-table__checkbox .v-input--selection-controls__input')
-      .click({ force: true })
+        .eq(2) // Third row (A3)
+        .find('.v-data-table__checkbox .v-input--selection-controls__input')
+        .click({ force: true })
 
     // Click SAVE
     cy.intercept('POST', '/profile/volunteer').as('saveProfile')
@@ -53,20 +53,52 @@ describe('VolunteerProfile', () => {
 
     // Confirm Total Participations stat
     cy.get('[data-cy="totalParticipationsStat"] span')
-      .should('have.text', TOTAL_PARTICIPATIONS.toString())
+        .should('have.text', TOTAL_PARTICIPATIONS.toString())
 
     // Confirm selected participations are in the table
     cy.get('[data-cy="selectedParticipationsTable"] tbody tr')
-      .should('have.length', 2)
-      .eq(0)
-      .find('td').first()
-      .should('contain', ACTIVITY1);
+        .should('have.length', 2)
+        .eq(0)
+        .find('td').first()
+        .should('contain', ACTIVITY1);
 
     cy.get('[data-cy="selectedParticipationsTable"] tbody tr')
-      .eq(1)
-      .find('td').first()
-      .should('contain', ACTIVITY3);
+        .eq(1)
+        .find('td').first()
+        .should('contain', ACTIVITY3);
 
-    // TODO - Log out and visit as unauth'd user the profiles list and confirm its there
+    // Log out and visit as unauth'd user the profiles list and confirm its there
+    cy.logout();
+    // Intercept requests that originate from ProfileListView
+    cy.intercept('GET', '/profiles/view').as('profiles')
+
+    // Click PROFILES -> VIEW PROFILES and wait
+    cy.get('[data-cy="profiles"]').click()
+    cy.get('[data-cy="view-profiles"]').click()
+    cy.wait('@profiles')
+
+    cy.wait(500)
+    cy.intercept('GET', '/profile/volunteer/*').as('volunteerProfile')
+    cy.get('[data-cy="view-profiles"]').should('have.length', 1);
+    cy.get('[data-cy="goToProfileBtn"]').click()
+    cy.wait('@volunteerProfile')
+    cy.wait(500)
+
+    // Confirm Total Participations stat
+    cy.get('[data-cy="totalParticipationsStat"] span')
+        .should('have.text', TOTAL_PARTICIPATIONS.toString())
+
+    // Confirm selected participations are in the table
+    cy.get('[data-cy="selectedParticipationsTable"] tbody tr')
+        .should('have.length', 2)
+        .eq(0)
+        .find('td').first()
+        .should('contain', ACTIVITY1);
+
+    cy.get('[data-cy="selectedParticipationsTable"] tbody tr')
+        .eq(1)
+        .find('td').first()
+        .should('contain', ACTIVITY3);
+
   })
 })
