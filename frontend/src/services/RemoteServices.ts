@@ -828,7 +828,7 @@ export default class RemoteServices {
 
   static async getAllVolunteerProfiles(): Promise<VolunteerProfile[]> {
     return httpClient
-      .get('/profiles/view')
+      .get('/profile/volunteer/all')
       .then((response) => {
         return response.data.map((profile: any) => {
           return new VolunteerProfile(profile);
