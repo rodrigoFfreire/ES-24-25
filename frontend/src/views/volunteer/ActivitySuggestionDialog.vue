@@ -109,7 +109,7 @@
           Close
         </v-btn>
         <v-btn
-          v-if="canSave"
+          :disabled="!canSave"
           color="blue-darken-1"
           variant="text"
           @click="saveSuggestion"
