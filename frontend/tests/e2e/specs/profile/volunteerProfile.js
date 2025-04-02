@@ -49,7 +49,6 @@ describe('VolunteerProfile', () => {
 
     cy.get('[data-cy="saveVolunteerProfileBtn"]').click()
     cy.wait('@saveProfile')
-    cy.wait(500)
 
     // Confirm Total Participations stat
     cy.get('[data-cy="totalParticipationsStat"] span')
@@ -77,12 +76,10 @@ describe('VolunteerProfile', () => {
     cy.get('[data-cy="view-profiles"]').click()
     cy.wait('@profiles')
 
-    cy.wait(500)
     cy.intercept('GET', '/profile/volunteer/*').as('volunteerProfile')
     cy.get('[data-cy="view-profiles"]').should('have.length', 1);
     cy.get('[data-cy="goToProfileBtn"]').click()
     cy.wait('@volunteerProfile')
-    cy.wait(500)
 
     // Confirm Total Participations stat
     cy.get('[data-cy="totalParticipationsStat"] span')
