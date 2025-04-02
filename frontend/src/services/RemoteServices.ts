@@ -638,6 +638,17 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+
+  static async createInstitutionProfile(profile: InstitutionProfile): Promise<InstitutionProfile> {
+    return httpClient
+      .post('/profile/institution', profile)
+      .then(response => new InstitutionProfile(response.data))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+  
+  
   
   // Assessment Controller
 
