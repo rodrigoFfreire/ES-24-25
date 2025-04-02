@@ -2,16 +2,22 @@
   <div class="container">
     <div v-if="!profile && !$store.getters.getLoading">
       <h1 class="mb-2">Volunteer Profile</h1>
-      <p class="mb-8">
-        No volunteer profile found. Click the button below to create a new one!
-      </p>
-      <v-btn
-        color="blue"
-        data-cy="createVolunteerProfileBtn"
-        @click="openDialog"
-      >
-        Create My Profile</v-btn
-      >
+      <div v-if="isCurrentUser()">
+        <p class="mb-8">
+          No volunteer profile found. Click the button below to create a new
+          one!
+        </p>
+        <v-btn
+          color="blue"
+          data-cy="createVolunteerProfileBtn"
+          @click="openDialog"
+        >
+          Create My Profile</v-btn
+        >
+      </div>
+      <div v-else>
+        <p class="mb-8">This volunteer has not created a profile yet.</p>
+      </div>
     </div>
     <div v-else-if="!$store.getters.getLoading">
       <h1>Volunteer: {{ profile?.volunteer?.name }}</h1>
@@ -168,6 +174,10 @@ export default class VolunteerProfileView extends Vue {
 
   closeDialog() {
     this.showDialog = false;
+  }
+
+  isCurrentUser() {
+    return this.$store.getters.getUser.id == this.userId;
   }
 
   handleProfileCreated(newProfile: VolunteerProfile) {
