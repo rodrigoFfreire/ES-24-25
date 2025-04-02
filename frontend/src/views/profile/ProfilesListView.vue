@@ -5,12 +5,12 @@
         <h2>Volunteer Profiles</h2>
       </v-card-title>
       <v-data-table
-        :headers="headersVolunteerProfile"
-        :items="volunteerProfiles"
-        :search="search"
-        disable-pagination
-        :hide-default-footer="true"
-        :mobile-breakpoint="0"
+          :headers="headersVolunteerProfile"
+          :items="volunteerProfiles"
+          :search="search"
+          disable-pagination
+          :hide-default-footer="true"
+          :mobile-breakpoint="0"
       >
         <template v-slot:item.volunteer.creationDate="{ item }">
           {{ ISOtoString(item.volunteer.creationDate) }}
@@ -21,10 +21,10 @@
         <template v-slot:top>
           <v-card-title>
             <v-text-field
-              v-model="search"
-              append-icon="search"
-              label="Search"
-              class="mx-2"
+                v-model="search"
+                append-icon="search"
+                label="Search"
+                class="mx-2"
             />
           </v-card-title>
         </template>
@@ -36,12 +36,12 @@
         <h2>Institution Profiles</h2>
       </v-card-title>
       <v-data-table
-        :headers="headersInstitutionProfile"
-        :items="institutionProfiles"
-        :search="search"
-        disable-pagination
-        :hide-default-footer="true"
-        :mobile-breakpoint="0"
+          :headers="headersInstitutionProfile"
+          :items="institutionProfiles"
+          :search="search"
+          disable-pagination
+          :hide-default-footer="true"
+          :mobile-breakpoint="0"
       >
         <template v-slot:item.institution.creationDate="{ item }">
           {{ ISOtoString(item.institution.creationDate) }}
@@ -49,10 +49,10 @@
         <template v-slot:top>
           <v-card-title>
             <v-text-field
-              v-model="search"
-              append-icon="search"
-              label="Search"
-              class="mx-2"
+                v-model="search"
+                append-icon="search"
+                label="Search"
+                class="mx-2"
             />
           </v-card-title>
         </template>
@@ -61,17 +61,19 @@
   </div>
 </template>
 
+
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { ISOtoString } from "../../services/ConvertDateService";
+import VolunteerProfile from '@/models/profile/VolunteerProfile';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component({
   methods: { ISOtoString }
 })
 export default class ProfilesListView extends Vue {
-  //volunteerProfiles: VolunteerProfile[] = []; // TODO: this is the object that will be used to fill in the table
+  volunteerProfiles: VolunteerProfile[] = [];
   //institutionProfiles: InstitutionProfile[] = []; // TODO: this is the object that will be used to fill in the table
-
   search: string = '';
 
   headersVolunteerProfile: object = [
@@ -132,10 +134,20 @@ export default class ProfilesListView extends Vue {
     },
   ];
 
+
+  async fetchVolunteerProfiles() {
+    try {
+      this.volunteerProfiles = await RemoteServices.getAllVolunteerProfiles(); // Fetch from backend
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
+
   async created() {
     await this.$store.dispatch('loading');
     try {
-      // TODO
+      await this.fetchVolunteerProfiles();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -144,4 +156,17 @@ export default class ProfilesListView extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+
+<style lang="scss" scoped>
+.date-fields-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.date-fields-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+</style>
