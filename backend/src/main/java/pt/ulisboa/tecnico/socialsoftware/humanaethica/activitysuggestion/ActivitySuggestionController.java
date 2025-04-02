@@ -20,7 +20,7 @@ public class ActivitySuggestionController {
     @GetMapping("/institution/{institutionId}")
     @PreAuthorize("hasRole('ROLE_MEMBER') and hasPermission(#institutionId, 'INSTITUTION.MEMBER')")
     public List<ActivitySuggestionDto> getActivitySuggestions(@PathVariable Integer institutionId) {
-        return this.activitySuggestionService.getActivitySuggestionsByInstitution(institutionId);
+        return activitySuggestionService.getActivitySuggestionsByInstitution(institutionId);
     }
 
     @GetMapping("/volunteer")
@@ -29,6 +29,14 @@ public class ActivitySuggestionController {
         int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
         return this.activitySuggestionService.getActivitySuggestionsByVolunteer(userId);
     }
+
+    @PutMapping("/institution/{institutionId}/{suggestionId}/approve")
+    @PreAuthorize("hasRole('ROLE_MEMBER') and hasPermission(#institutionId, 'INSTITUTION.MEMBER')")
+    public List<ActivitySuggestionDto> approveActivitySuggestion(@PathVariable Integer institutionId, @PathVariable Integer suggestionId) {
+        return activitySuggestionService.approveActivitySuggestion(institutionId, suggestionId);
+    }
+
+    
 
     @PostMapping("/institution/{institutionId}")
     @PreAuthorize("hasRole('ROLE_VOLUNTEER')")
