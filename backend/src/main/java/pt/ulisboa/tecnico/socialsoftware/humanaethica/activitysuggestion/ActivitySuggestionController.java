@@ -36,7 +36,11 @@ public class ActivitySuggestionController {
         return activitySuggestionService.approveActivitySuggestion(institutionId, suggestionId);
     }
 
-    
+    @PutMapping("/institution/{institutionId}/{suggestionId}/reject")
+    @PreAuthorize("hasRole('ROLE_MEMBER') and hasPermission(#institutionId, 'INSTITUTION.MEMBER')")
+    public List<ActivitySuggestionDto> rejectActivitySuggestion(@PathVariable Integer institutionId, @PathVariable Integer suggestionId) {
+        return activitySuggestionService.rejectActivitySuggestion(institutionId, suggestionId);
+    }
 
     @PostMapping("/institution/{institutionId}")
     @PreAuthorize("hasRole('ROLE_VOLUNTEER')")
