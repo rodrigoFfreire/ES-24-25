@@ -12,6 +12,7 @@ import RegisterMember from '@/models/member/RegisterMember';
 import AuthPasswordDto from '@/models/user/AuthPasswordDto';
 import Theme from '@/models/theme/Theme';
 import Enrollment from '@/models/enrollment/Enrollment';
+import ActivitySuggestion from '@/models/activitysuggestion/ActivitySuggestion';
 import Participation from '@/models/participation/Participation';
 import Assessment from '@/models/assessment/Assessment';
 import Report from '@/models/report/Report';
@@ -466,6 +467,56 @@ export default class RemoteServices {
       .put(`/activities/${activityId}/report`)
       .then((response) => {
         return new Activity(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+  // Activity Suggestion controller
+
+  static async getActivitySuggestionsByInstitution(institutionId: number):Promise<ActivitySuggestion[]> {
+    return httpClient
+      .get(`/activitySuggestions/institution/${institutionId}`)
+      .then((response) => {
+        return response.data.map((suggestion: any) => {
+          return new ActivitySuggestion(suggestion);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async approveActivitySuggestion(
+    institutionId: number,
+    suggestionId: number,
+  ): Promise<ActivitySuggestion[]> {
+    return httpClient
+      .put(
+        `/activitySuggestions/institution/${institutionId}/${suggestionId}/approve`,
+      )
+      .then((response) => {
+        return response.data.map((suggestion: any) => {
+          return new ActivitySuggestion(suggestion);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async rejectActivitySuggestion(
+    institutionId: number,
+    suggestionId: number,
+  ): Promise<ActivitySuggestion[]> {
+    return httpClient
+      .put(
+        `/activitySuggestions/institution/${institutionId}/${suggestionId}/reject`,
+      )
+      .then((response) => {
+        return response.data.map((suggestion: any) => {
+          return new ActivitySuggestion(suggestion);
+        });
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
