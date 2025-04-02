@@ -69,17 +69,16 @@ describe('VolunteerProfile', () => {
     // Log out and visit as unauth'd user the profiles list and confirm its there
     cy.logout();
     // Intercept requests that originate from ProfileListView
-    cy.intercept('GET', '/profile/volunteer/all').as('profiles')
+    cy.intercept('GET', '/profile/volunteer/*').as('profiles')
 
     // Click PROFILES -> VIEW PROFILES and wait
     cy.get('[data-cy="profiles"]').click()
     cy.get('[data-cy="view-profiles"]').click()
     cy.wait('@profiles')
 
-    cy.intercept('GET', '/profile/volunteer/*').as('volunteerProfile')
     cy.get('[data-cy="view-profiles"]').should('have.length', 1);
     cy.get('[data-cy="goToProfileBtn"]').click()
-    cy.wait('@volunteerProfile')
+    cy.wait('@profiles')
 
     // Confirm Total Participations stat
     cy.get('[data-cy="totalParticipationsStat"] span')

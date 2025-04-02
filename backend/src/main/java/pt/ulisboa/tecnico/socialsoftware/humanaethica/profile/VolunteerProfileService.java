@@ -13,7 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.UserReposi
 
 import java.util.Optional;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
 
