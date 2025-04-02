@@ -812,40 +812,44 @@ export default class RemoteServices {
 
   // VolunteerProfile Controller
 
-  static async getVolunteerProfile(volunteerId: number): Promise<VolunteerProfile | null> {
+  static async getVolunteerProfile(
+    volunteerId: number,
+  ): Promise<VolunteerProfile | null> {
     return httpClient
-        .get(`/profile/volunteer/${volunteerId}`)
-        .then((response) => {
-          if (!response.data) return null;
-          return new VolunteerProfile(response.data);
-        })
-        .catch(async (error) => {
-          throw Error(await this.errorMessage(error));
-        });
+      .get(`/profile/volunteer/${volunteerId}`)
+      .then((response) => {
+        if (!response.data) return null;
+        return new VolunteerProfile(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
-  static async getAllVolunteerProfiles(): Promise<VolunteerProfile[]>{
+  static async getAllVolunteerProfiles(): Promise<VolunteerProfile[]> {
     return httpClient
-        .get(`/profiles/view`)
-        .then((response) => {
-          return response.data.map((profile: any) => {
-            return new VolunteerProfile(profile);
-          });
-        })
-        .catch(async (error) => {
-          throw Error(await this.errorMessage(error));
+      .get('/profiles/view')
+      .then((response) => {
+        return response.data.map((profile: any) => {
+          return new VolunteerProfile(profile);
         });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
-  static async createVolunteerProfile(profile: VolunteerProfile): Promise<VolunteerProfile>{
+  static async createVolunteerProfile(
+    profile: VolunteerProfile,
+  ): Promise<VolunteerProfile> {
     return httpClient
-        .post('/profile/volunteer', profile)
-        .then((response) => {
-          return new VolunteerProfile(response.data);
-        })
-        .catch(async (error) => {
-          throw Error(await this.errorMessage(error));
-        });
+      .post('/profile/volunteer', profile)
+      .then((response) => {
+        return new VolunteerProfile(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   // Error
