@@ -10,6 +10,7 @@
       :dialog.sync="showDialog"
       :institutionId="institutionId"
       @institution-profile:close="closeDialog"
+      @institution-profile:create="onProfileCreated"
     />
   </div>
 
@@ -151,6 +152,11 @@ export default class InstitutionProfileView extends Vue {
   }
 
   closeDialog() {
+    this.showDialog = false;
+  }
+
+  onProfileCreated(profile: InstitutionProfile) {
+    this.profile = profile;
     this.showDialog = false;
   }
 }
