@@ -10,6 +10,7 @@
             <v-row>
               <v-col cols="12">
                 <v-text-field
+                  data-cy="profileDescription"
                   label="*Short description"
                   :rules="[
                     (v) => !!v || 'Short description is required',
@@ -25,31 +26,46 @@
   
         <h2>Selected Assessments</h2>
         <v-card class="table">
-          <v-data-table
-            :headers="headers"
-            :items="assessments"
-            :search="search"
-            v-model="newProfile.selectedAssessments"
-            disable-pagination
-            show-select
-            :hide-default-footer="true"
-            :mobile-breakpoint="0"
-          >
-            <template v-slot:item.reviewDate="{ item }">
-              {{ ISOtoString(item.reviewDate) }}
-            </template>
-            <template v-slot:top>
-              <v-card-title>
-                <v-text-field
-                  v-model="search"
-                  append-icon="search"
-                  label="Search"
-                  class="mx-2"
-                />
-                <v-spacer />
-              </v-card-title>
-            </template>
-          </v-data-table>
+            <v-data-table
+                :headers="headers"
+                :items="assessments"
+                :search="search"
+                v-model="newProfile.selectedAssessments"
+                disable-pagination
+                show-select
+                :hide-default-footer="true"
+                :mobile-breakpoint="0"
+                >
+                <template v-slot:item.data-table-select="{ isSelected, select, index }">
+                    <td class="v-data-table__checkbox">
+                        <v-checkbox
+                        :input-value="isSelected"
+                        :ripple="false"
+                        :data-cy="`assessmentCheckbox-${index}`"
+                        hide-details
+                        dense
+                        color="grey darken-1"
+                        @change="select(!isSelected)"
+                        />
+                    </td>
+                </template>
+
+                <template v-slot:item.reviewDate="{ item }">
+                    {{ ISOtoString(item.reviewDate) }}
+                </template>
+
+                <template v-slot:top>
+                    <v-card-title>
+                    <v-text-field
+                        v-model="search"
+                        append-icon="search"
+                        label="Search"
+                        class="mx-2"
+                    />
+                    <v-spacer />
+                    </v-card-title>
+                </template>
+            </v-data-table>
         </v-card>
   
         <v-card-actions>

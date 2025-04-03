@@ -30,23 +30,27 @@ Cypress.Commands.add('deleteAllButArs', () => {
   cy.task('queryDatabase', {
     query: "DELETE FROM ASSESSMENT",
     credentials: credentials,
-  })
+  });
   cy.task('queryDatabase', {
     query: "DELETE FROM PARTICIPATION",
     credentials: credentials,
-  })
+  });
   cy.task('queryDatabase', {
     query: "DELETE FROM ENROLLMENT",
     credentials: credentials,
-  })
+  });
   cy.task('queryDatabase', {
     query: "DELETE FROM REPORT",
     credentials: credentials,
-  })
+  });
   cy.task('queryDatabase', {
     query: "DELETE FROM ACTIVITY",
     credentials: credentials,
-  })
+  });
+  cy.task('queryDatabase', {
+    query: "DELETE FROM institution_profile", // ← esta linha resolve o erro
+    credentials: credentials,
+  });
   cy.task('queryDatabase', {
     query: "DELETE FROM AUTH_USERS WHERE NOT (username = 'ars')",
     credentials: credentials,
@@ -251,6 +255,27 @@ Cypress.Commands.add('createDatabaseInfoForVolunteerAssessments', () => {
     query: "INSERT INTO " + ASSESSMENT_COLUMNS + generateAssessmentTuple(1, "Muito bom!", 2, 3),
     credentials: credentials,
   })
+});
+
+Cypress.Commands.add('createDatabaseInfoForInstitutionProfiles', () => {
+  for (let i = 1; i <= 4; i++) {
+    cy.task('queryDatabase', {
+      query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(i, `A${i}`, `Descrição ${i}`, "2025-04-10 12:00:00", "2025-04-12 12:00:00", "2025-04-15 12:00:00", 10, 1),
+      credentials
+    });
+    cy.task('queryDatabase', {
+      query: "INSERT INTO " + ENROLLMENT_COLUMNS + generateEnrollmentTuple(i, i, 3),
+      credentials
+    });
+    cy.task('queryDatabase', {
+      query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(i, i, 3),
+      credentials
+    });
+    cy.task('queryDatabase', {
+      query: "INSERT INTO " + ASSESSMENT_COLUMNS + generateAssessmentTuple(i, `Review ${i}`, 1, 3),
+      credentials
+    });
+  }
 });
 
 function generateAuthUserTuple(id, authType, username, userId) {

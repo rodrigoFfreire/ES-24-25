@@ -4,7 +4,7 @@
     <p class="mb-8">
       No institution profile found. Click the button below to create a new one!
     </p>
-    <v-btn color="blue" @click="openDialog">Create Institution Profile</v-btn>
+    <v-btn color="blue" data-cy="createInstitutionProfile" @click="openDialog">Create Institution Profile</v-btn>
     <InstitutionProfileDialog
       v-if="institutionId !== null"
       :dialog.sync="showDialog"
