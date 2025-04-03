@@ -18,6 +18,20 @@
         <template v-slot:item.volunteer.lastAccess="{ item }">
           {{ ISOtoString(item.volunteer.lastAccess) }}
         </template>
+        <template v-slot:item.action="{ item }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-icon
+                class="mr-2 action-button"
+                v-on="on"
+                data-cy="goToProfileBtn"
+                @click="goToProfile(item.volunteer.id)"
+                >mdi-eye
+              </v-icon>
+            </template>
+            <span>View volunteer profile</span>
+          </v-tooltip>
+        </template>
         <template v-slot:top>
           <v-card-title>
             <v-text-field
@@ -63,15 +77,16 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ISOtoString } from "../../services/ConvertDateService";
+import { ISOtoString } from '../../services/ConvertDateService';
+import VolunteerProfile from '@/models/profile/VolunteerProfile';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component({
-  methods: { ISOtoString }
+  methods: { ISOtoString },
 })
 export default class ProfilesListView extends Vue {
-  //volunteerProfiles: VolunteerProfile[] = []; // TODO: this is the object that will be used to fill in the table
+  volunteerProfiles: VolunteerProfile[] = [];
   //institutionProfiles: InstitutionProfile[] = []; // TODO: this is the object that will be used to fill in the table
-
   search: string = '';
 
   headersVolunteerProfile: object = [
@@ -132,10 +147,25 @@ export default class ProfilesListView extends Vue {
     },
   ];
 
+  goToProfile(volunteerId: number) {
+    this.$router.push({
+      name: 'volunteer-profile',
+      params: { id: String(volunteerId) },
+    });
+  }
+
+  async fetchVolunteerProfiles() {
+    try {
+      this.volunteerProfiles = await RemoteServices.getAllVolunteerProfiles(); // Fetch from backend
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
   async created() {
     await this.$store.dispatch('loading');
     try {
-      // TODO
+      await this.fetchVolunteerProfiles();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -144,4 +174,16 @@ export default class ProfilesListView extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.date-fields-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.date-fields-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+</style>

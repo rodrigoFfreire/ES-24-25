@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.profile.dto.VolunteerProfi
 
 import java.security.Principal;
 import java.util.Optional;
+import java.util.List;
 
 @RestController()
 public class VolunteerProfileController {
@@ -19,6 +20,11 @@ public class VolunteerProfileController {
     @GetMapping("/profile/volunteer/{volunteerId}")
     public Optional<VolunteerProfileDto> getVolunteerProfile(@PathVariable Integer volunteerId) {
         return volunteerProfileService.getVolunteerProfile(volunteerId);
+    }
+
+    @GetMapping("/profile/volunteer/all")
+    public List<VolunteerProfileDto> getAllVolunteerProfiles() {
+        return volunteerProfileService.getAllVolunteerProfiles();
     }
 
     @PostMapping("/profile/volunteer")
