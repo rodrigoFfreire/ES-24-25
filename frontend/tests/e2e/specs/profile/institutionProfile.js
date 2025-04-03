@@ -1,8 +1,8 @@
 describe('Seed Test for Institution Profiles', () => {
-    it('should populate database with test activities, enrollments, etc.', () => {
-      cy.deleteAllButArs(); // limpa base
-      cy.createDemoEntities(); // recria dados base
-      cy.createDatabaseInfoForInstitutionProfiles(); // cria 4 atividades + avaliações
+    it('create institution profile', () => {
+      cy.deleteAllButArs();
+      cy.createDemoEntities();
+      cy.createDatabaseInfoForInstitutionProfiles();
   
       const DESCRIPTION = 'DEMO Institution Description';
   
