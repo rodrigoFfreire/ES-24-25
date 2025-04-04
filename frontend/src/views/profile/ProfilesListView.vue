@@ -170,6 +170,7 @@ export default class ProfilesListView extends Vue {
   
   viewInstitutionDetails(institutionProfile: InstitutionProfile) {
     // Navigate to the institution details page
+    this.$store.commit('setCurrentInstitutionProfile', institutionProfile);
     this.$router.push({ 
       name: 'institution-profile', 
       params: { id: institutionProfile.institution.id.toString() } 

@@ -15,6 +15,7 @@ interface State {
   notificationMessageList: string[];
   loading: boolean;
   activity: Activity | null;
+  currentInstitutionProfile: InstitutionProfile | null;
 }
 
 const state: State = {
@@ -25,7 +26,8 @@ const state: State = {
   notification: false,
   notificationMessageList: [],
   loading: false,
-  activity: null
+  activity: null,
+  currentInstitutionProfile: null
 };
 
 Vue.use(Vuex);
@@ -87,7 +89,10 @@ export default new Vuex.Store({
     setActivity(state: State, activity: Activity) {
       localStorage.setItem('activity', JSON.stringify(activity));
       state.activity = activity;
-    }
+    },
+    setCurrentInstitutionProfile(state, profile: InstitutionProfile) {
+        state.currentInstitutionProfile = profile;
+    },
   },
   actions: {
     error({ commit }, errorMessage) {
@@ -177,6 +182,9 @@ export default new Vuex.Store({
     },
     getActivity(state: State): Activity | null {
       return state.activity;
+    },
+    getCurrentInstitutionProfile(state: State): InstitutionProfile | null {
+      return state.currentInstitutionProfile;
     }
   },
 });

@@ -130,19 +130,20 @@ export default class InstitutionProfileView extends Vue {
   ];
   async created() {
       await this.$store.dispatch('loading');
-
       try {
-        // Get the institution ID from the route params instead of the user session
-        this.institutionId = this.$route.params.id;
-
-        if (this.institutionId) {
+        this.institutionId = Number(this.$route.params.id);
+        const cachedProfile = this.$store.getters.getCurrentInstitutionProfile;
+        
+        // Check if cached profile matches route ID
+        if (cachedProfile?.institution.id === this.institutionId) {
+          this.profile = cachedProfile; // Use cached data
+        } else {
+          // Fetch fresh data if no match or direct URL access
           this.profile = await RemoteServices.getInstitutionProfile(this.institutionId);
-          console.log("Profile received:", JSON.stringify(this.profile));
         }
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
-
       await this.$store.dispatch('clearLoading');
     }
 
