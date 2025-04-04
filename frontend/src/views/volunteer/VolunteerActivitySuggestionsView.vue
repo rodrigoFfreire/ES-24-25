@@ -9,6 +9,10 @@
       :mobile-breakpoint="0"
       data-cy="volunteerActivitySuggestionsTable"
     >
+      <template v-slot:item.institutionName="{ item }">
+        <span>{{ getInstitutionName(item.institutionId) }}</span>
+      </template>
+
       <template v-slot:top>
         <v-card-title>
           <v-text-field
@@ -42,6 +46,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import ActivitySuggestion from '@/models/activitysuggestion/ActivitySuggestion';
 import ActivitySuggestionDialog from '@/views/volunteer/ActivitySuggestionDialog.vue';
+import Institution from '@/models/institution/Institution';
 
 @Component({
   components: {
@@ -50,6 +55,7 @@ import ActivitySuggestionDialog from '@/views/volunteer/ActivitySuggestionDialog
 })
 export default class VolunteerActivitySuggestionsView extends Vue {
   activitySuggestions: ActivitySuggestion[] = [];
+  institutions: Institution[] = [];
   search: string = '';
   dialog: boolean = false;
 
@@ -120,10 +126,15 @@ export default class VolunteerActivitySuggestionsView extends Vue {
     await this.$store.dispatch('loading');
     try {
       this.activitySuggestions = await RemoteServices.getVolunteerActivitySuggestions();
+      this.institutions = await RemoteServices.getInstitutions();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  getInstitutionName(searchId:number) {
+    return this.institutions.find((institution) => institution.id == searchId)?.name;
   }
 
   onSuggestionCreated(newSuggestion: ActivitySuggestion) {

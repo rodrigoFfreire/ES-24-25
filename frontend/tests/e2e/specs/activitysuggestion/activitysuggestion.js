@@ -13,7 +13,7 @@ describe('ActivitySuggestion', () => {
       const DESCRIPTION = 'NEW activity suggestion';
       const NAME = 'AS1';
       const REGION = 'Lisboa';
-      const INSTITUTION_NAME = 'DEMO_INSTITUTION';
+      const INSTITUTION_NAME = 'DEMO INSTITUTION';
       
   
       cy.intercept('GET', '/activitySuggestions/volunteer').as('getSuggestions');
@@ -24,17 +24,12 @@ describe('ActivitySuggestion', () => {
       cy.demoVolunteerLogin()
       cy.get('[data-cy="volunteerActivitySuggestions"]').click();
       cy.wait('@getSuggestions');
+      cy.wait('@institutions');
       cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
         .should('have.length', 2)
         .eq(0)
-      cy.logout()
   
       // volunteer creates new activity suggestion
-      cy.demoVolunteerLogin()
-      cy.get('[data-cy="volunteerActivitySuggestions"]').click();
-      cy.wait('@getSuggestions');
-      cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
-        .eq(0)
       cy.get('[data-cy="newActivitySuggestionButton"]').click();
       cy.wait('@institutions');
       cy.get('[data-cy="nameInput"]').type(NAME);
@@ -48,25 +43,18 @@ describe('ActivitySuggestion', () => {
       cy.get('#endingDateInput-input').click().get('button').filter(':visible').contains('28').click();
       cy.get('[data-cy="saveActivitySuggestion"]').click()
       cy.wait('@suggest')
-      cy.logout()
 
       // volunteer check that there are 3 activity suggestions
-      cy.demoVolunteerLogin()
-      cy.get('[data-cy="volunteerActivitySuggestions"]').click();
-      cy.wait('@getSuggestions');
       cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
         .should('have.length', 3)
         .eq(0)
-      cy.logout()
 
       // volunteer check correct data in new activitysuggestion
-      cy.demoVolunteerLogin()
-      cy.get('[data-cy="volunteerActivitySuggestions"]').click();
-      cy.wait('@getSuggestions');
+      
       cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
         .eq(2).children().eq(0).should('contain', NAME);
       cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
-        .eq(2).children().eq(1).should('contain', INSTITUTION_NAME)
+        .eq(2).children().eq(1).should('have.text', INSTITUTION_NAME)
       cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
         .eq(2).children().eq(2).should('contain', DESCRIPTION);
       cy.logout();

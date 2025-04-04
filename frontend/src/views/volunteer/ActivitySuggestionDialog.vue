@@ -41,7 +41,8 @@
               <v-text-field
                 label="*Description"
                 v-model="editSuggestion.description"
-                :rules="[(v) => !!v || 'Description is required']"
+                :rules="[(v) => !!v || 'Description is required',
+                         (v) => (v && v.length >= 10) || 'Description must be at least 10 characters']"
                 required
                 data-cy="descriptionInput"
               />
@@ -63,7 +64,7 @@
               <v-text-field
                 label="*Number of Participants"
                 v-model.number="editSuggestion.participantsNumberLimit"
-                :rules="[(v) => v > 0 || 'Must be greater than 0']"
+                :rules="[(v) => v >= 1 || 'Must be a number >= 1']"
                 required
                 type="number"
                 data-cy="participantsInput"
@@ -161,8 +162,9 @@ export default class ActivitySuggestionDialog extends Vue {
       !!s.name &&
       !!s.institutionId &&
       !!s.description &&
+      s.description.length >= 10 && 
       !!s.region &&
-      s.participantsNumberLimit > 0 &&
+      s.participantsNumberLimit > 1 &&
       !!s.applicationDeadline &&
       !!s.startingDate &&
       !!s.endingDate
