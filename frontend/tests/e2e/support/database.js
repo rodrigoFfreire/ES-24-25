@@ -293,7 +293,7 @@ Cypress.Commands.add('createDatabaseInfoForInstitutionProfiles', () => {
       credentials
     });
     cy.task('queryDatabase', {
-      query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(i, "", 3, 3),
+      query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(i, "", i, 3),
       credentials
     });
     cy.task('queryDatabase', {
