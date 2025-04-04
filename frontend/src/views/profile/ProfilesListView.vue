@@ -100,8 +100,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { ISOtoString } from "../../services/ConvertDateService";
 import RemoteServices from '../../services/RemoteServices';
-import InstitutionProfile from '@/models/institution/InstitutionProfile';
-import VolunteerProfile from '@/models/volunteer/VolunteerProfile';
+import InstitutionProfile from '@/models/profile/InstitutionProfile';
 import VolunteerProfile from '@/models/profile/VolunteerProfile';
 
 @Component({
@@ -198,12 +197,15 @@ export default class ProfilesListView extends Vue {
   }
   
   viewInstitutionDetails(institutionProfile: InstitutionProfile) {
-    // Navigate to the institution details page
-    this.$store.commit('setCurrentInstitutionProfile', institutionProfile);
-    this.$router.push({ 
-      name: 'institution-profile', 
-      params: { id: institutionProfile.institution.id.toString() } 
-    });
+      if (institutionProfile?.institution?.id) {
+        this.$store.commit('setCurrentInstitutionProfile', institutionProfile);
+        this.$router.push({
+          name: 'institution-profile',
+          params: { id: institutionProfile.institution.id.toString() }
+        });
+      } else {
+        console.error('Invalid institutionProfile:', institutionProfile);
+      }
   }
 }
 </script>

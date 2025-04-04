@@ -5,6 +5,7 @@ import TokenAuthUser from '@/models/user/TokenAuthUser';
 import AuthUser from '@/models/user/AuthUser';
 import RegisterUser from '@/models/user/RegisterUser';
 import Activity from '@/models/activity/Activity';
+import InstitutionProfile from '@/models/profile/InstitutionProfile';
 
 interface State {
   token: string;
