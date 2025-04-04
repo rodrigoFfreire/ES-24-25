@@ -52,44 +52,47 @@ describe('ActivitySuggestion', () => {
       // volunteer check correct data in new activitysuggestion
       
       cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
-        .eq(2).children().eq(0).should('contain', NAME);
+        .eq(0).children().eq(0).should('contain', NAME);
       cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
-        .eq(2).children().eq(1).should('have.text', INSTITUTION_NAME)
+        .eq(0).children().eq(1).should('have.text', INSTITUTION_NAME)
       cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
-        .eq(2).children().eq(2).should('contain', DESCRIPTION);
+        .eq(0).children().eq(2).should('contain', DESCRIPTION);
       cy.logout();
     });
 
     it('approve and reject activity suggestions as member', () => {
       cy.intercept('GET', '/activitySuggestions/institution/*').as('getSuggestions');
-      cy.intercept('POST', '/activitySuggestions/institution/*/approve/*').as('approve');
-      cy.intercept('POST', '/activitySuggestions/institution/*/reject/*').as('reject');
+      cy.intercept('GET', '/activitySuggestions/volunteer').as('VolunteerSuggestions');
+      cy.intercept('PUT', '/activitySuggestions/institution/*/*/approve').as('approve');
+      cy.intercept('PUT', '/activitySuggestions/institution/*/*/reject').as('reject');
   
       // login as member and go to activity suggestions view
       cy.demoMemberLogin();
-      cy.get('[data-cy="institutionActivitySuggestions"]').click();
+      cy.get('[data-cy="institution"]').click();
+      cy.get('[data-cy="activitysuggestions"]').click();
       cy.wait('@getSuggestions');
-  
+      
       // check that the first suggestion is in IN_REVIEW state
       cy.get('tbody tr').first().children().eq(9).should('contain', 'IN_REVIEW');
-  
+      
       // approve the suggestion
       cy.get('[data-cy="approveButton"]').first().click();
       cy.wait('@approve');
       cy.get('tbody tr').first().children().eq(9).should('contain', 'APPROVED');
       cy.logout();
-  
+      
       // login as volunteer and check that the state is now APPROVED
       cy.demoVolunteerLogin();
       cy.get('[data-cy="volunteerActivitySuggestions"]').click();
-      cy.wait('@getSuggestions');
+      cy.wait('@VolunteerSuggestions');
       cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
-        .eq(0).children().eq(9).should('contain', 'APPROVED');
+      .eq(0).children().eq(9).should('contain', 'APPROVED');
       cy.logout();
-  
+      
       // login again as member to reject the next suggestion
       cy.demoMemberLogin();
-      cy.get('[data-cy="institutionActivitySuggestions"]').click();
+      cy.get('[data-cy="institution"]').click();
+      cy.get('[data-cy="activitysuggestions"]').click();
       cy.wait('@getSuggestions');
   
       // reject the suggestion
@@ -101,7 +104,7 @@ describe('ActivitySuggestion', () => {
       // login as volunteer and check that the state is now REJECTED
       cy.demoVolunteerLogin();
       cy.get('[data-cy="volunteerActivitySuggestions"]').click();
-      cy.wait('@getSuggestions');
+      cy.wait('@VolunteerSuggestions');
       cy.get('[data-cy="volunteerActivitySuggestionsTable"] tbody tr')
         .eq(0).children().eq(9).should('contain', 'REJECTED');
     });

@@ -4,6 +4,7 @@
       :headers="headers"
       :items="activitySuggestions"
       :search="search"
+      :sort-by="['name']"
       disable-pagination
       :hide-default-footer="true"
       :mobile-breakpoint="0"

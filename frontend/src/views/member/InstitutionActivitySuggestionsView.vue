@@ -5,8 +5,10 @@
       :items="suggestions"
       :search="search"
       disable-pagination
+      :sort-by="['name']" 
       :hide-default-footer="true"
       :mobile-breakpoint="0"
+      data-cy="institutionActivitySuggestionsTable"
     >
       <template v-slot:top>
         <v-card-title>
@@ -145,7 +147,6 @@ export default class InstitutionActivitySuggestionsView extends Vue {
       let userId = this.$store.getters.getUser.id;
       this.institution = await RemoteServices.getInstitution(userId!);
       this.suggestions =  await RemoteServices.getActivitySuggestionsByInstitution(this.institution.id!);
-      console.log(this.suggestions);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

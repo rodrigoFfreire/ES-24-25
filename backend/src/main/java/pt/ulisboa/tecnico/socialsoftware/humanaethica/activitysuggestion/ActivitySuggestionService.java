@@ -47,15 +47,6 @@ public class ActivitySuggestionService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<ActivitySuggestionDto> getActivitySuggestionsByVolunteer(Integer userId) {
-        if (userId == null) throw new HEException(USER_NOT_FOUND);
-        userRepository.findById(userId).orElseThrow(() -> new HEException(USER_NOT_FOUND));
-        return this.activitySuggestionRepository.getActivitySuggestionsByVolunteerId(userId).stream()
-                .map(ActivitySuggestionDto::new)
-                .toList();
-    }
-
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<ActivitySuggestionDto> approveActivitySuggestion(Integer institutionId, Integer suggestionId) {
         ActivitySuggestion suggestion = activitySuggestionRepository.findById(suggestionId).orElseThrow(() -> new HEException(SUGGESTION_NOT_FOUND, Integer.toString(suggestionId)));
         suggestion.setState(ActivitySuggestion.State.APPROVED);
