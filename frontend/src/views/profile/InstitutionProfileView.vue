@@ -15,9 +15,9 @@
   </div>
 
   <div v-else>
-    <h1>Institution: {{ profile?.institution.name }}</h1>
+    <h1 data-cy="institution-profile-name">Institution: {{ profile?.institution.name }}</h1>
     <div class="text-description">
-      <p><strong>Short Description: </strong> {{ profile?.shortDescription }}</p>
+      <p data-cy="institution-profile-description"><strong>Short Description: </strong> {{ profile?.shortDescription }}</p>
     </div>
 
     <div class="stats-container">
@@ -64,7 +64,7 @@
       <!-- Average Rating -->
       <div class="items">
         <div class="icon-wrapper">
-          <span>{{ profile?.averageRating.toFixed(2) }}</span>
+          <span>{{ (profile?.averageRating || 0).toFixed(2) }}</span>
         </div>
         <div class="project-name">
           <p>Average Rating</p>
@@ -137,6 +137,7 @@ export default class InstitutionProfileView extends Vue {
 
         if (this.institutionId) {
           this.profile = await RemoteServices.getInstitutionProfile(this.institutionId);
+          console.log("Profile received:", JSON.stringify(this.profile));
         }
       } catch (error) {
         await this.$store.dispatch('error', error);

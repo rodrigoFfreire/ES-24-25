@@ -35,5 +35,29 @@ describe('Seed Test for Institution Profiles', () => {
         .contains('td', '2024-02-07 18:51')
         .should('exist');
     });
+
+    it('get institution profile through profiles lists', () => {
+        cy.deleteAllButArs();
+        cy.createDemoEntities();
+        cy.createDatabaseInfoForInstitutionProfiles();
+
+        cy.visit('/');
+        cy.get('[data-cy="profiles"]').click();
+        cy.get('[data-cy="view-profiles"]').click();
+        
+        // Find and click on the view button for "New Demo Institution"
+        cy.get('[data-cy="institution-profiles-table"]')
+          .contains('tr', 'New Demo Institution')
+          .find('[data-cy="view-institution-profile"]')
+          .click();
+        
+        // Verify the institution name is displayed
+        cy.get('[data-cy="institution-profile-name"]')
+          .should('contain', 'Institution: New Demo Institution');
+        
+        // Verify the short description from the database
+        cy.get('[data-cy="institution-profile-description"]')
+          .should('contain', 'This is just a short description');
+      });
   });
   

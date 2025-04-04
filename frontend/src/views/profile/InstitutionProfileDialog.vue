@@ -105,19 +105,13 @@
       { text: 'Review Date', value: 'reviewDate', align: 'left', width: '30%' },
     ];
   
-  async created() {
+    async created() {
       await this.$store.dispatch('loading');
-
       try {
-        this.institutionId = this.$route.params.id;
-
-        if (this.institutionId) {
-          this.profile = await RemoteServices.getInstitutionProfile(this.institutionId);
-        }
+        this.assessments = await RemoteServices.getInstitutionAssessments(this.institutionId);
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
-
       await this.$store.dispatch('clearLoading');
     }
   
@@ -136,4 +130,4 @@
   </script>
   
   <style scoped lang="scss"></style>
- 
+  

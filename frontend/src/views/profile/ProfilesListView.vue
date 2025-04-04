@@ -31,9 +31,9 @@
       </v-data-table>
     </v-card>
     <!-- Institution Profiles -->
-    <v-card class="table">
+    <v-card class="table" data-cy="institution-profiles-card">
       <v-card-title>
-        <h2>Institution Profiles</h2>
+        <h2 data-cy="institution-profiles-title">Institution Profiles</h2>
       </v-card-title>
       <v-data-table
         :headers="headersInstitutionProfile"
@@ -42,19 +42,21 @@
         disable-pagination
         :hide-default-footer="true"
         :mobile-breakpoint="0"
+        data-cy="institution-profiles-table"
       >
         <template v-slot:item.institution.creationDate="{ item }">
-          {{ ISOtoString(item.institution.creationDate) }}
+          <span data-cy="institution-creation-date">{{ ISOtoString(item.institution.creationDate) }}</span>
         </template>
         <template v-slot:item.institution.active="{ item }">
-          </v-chip>
+          <span data-cy="institution-active-status"></span>
         </template>
         <template v-slot:item.action="{ item }">
           <v-btn
             icon
+            data-cy="view-institution-profile"
             @click="viewInstitutionDetails(item)"
           >
-          <v-icon class="pr-2">visibility</v-icon>
+            <v-icon class="pr-2" data-cy="view-institution-icon">visibility</v-icon>
           </v-btn>
         </template>
         <template v-slot:top>
@@ -64,8 +66,16 @@
               append-icon="search"
               label="Search"
               class="mx-2"
+              data-cy="institution-search-field"
             />
           </v-card-title>
+        </template>
+        <!-- You might want to add these for individual rows or columns -->
+        <template v-slot:item.institution.name="{ item }">
+          <span data-cy="institution-name">{{ item.institution.name }}</span>
+        </template>
+        <template v-slot:item.institution.id="{ item }">
+          <span data-cy="institution-id">{{ item.institution.id }}</span>
         </template>
       </v-data-table>
     </v-card>
@@ -158,11 +168,11 @@ export default class ProfilesListView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
   
-  viewInstitutionDetails(institution: InstitutionProfile) {
+  viewInstitutionDetails(institutionProfile: InstitutionProfile) {
     // Navigate to the institution details page
     this.$router.push({ 
       name: 'institution-profile', 
-      params: { id: institution.id.toString() } 
+      params: { id: institutionProfile.institution.id.toString() } 
     });
   }
 }

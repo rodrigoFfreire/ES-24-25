@@ -4,11 +4,11 @@ import Assessment from '@/models/assessment/Assessment';
 export default class InstitutionProfile {
   id: number | null = null;
   shortDescription!: string;
-  numMembers!: number;
-  numActivities!: number;
-  numAssessments!: number;
-  numVolunteers!: number;
-  averageRating!: number;
+  numMembers: number = 0;
+    numActivities: number = 0;
+    numAssessments: number = 0;
+    numVolunteers: number = 0;
+    averageRating: number = 0;
   institution!: Institution;
   selectedAssessments: Assessment[] = [];
 
