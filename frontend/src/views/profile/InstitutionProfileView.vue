@@ -128,19 +128,22 @@ export default class InstitutionProfileView extends Vue {
     { text: 'Review', value: 'review', align: 'left', width: '30%' },
     { text: 'Review Date', value: 'reviewDate', align: 'left', width: '40%' }
   ];
-
   async created() {
-    await this.$store.dispatch('loading');
-    try {
-      const user = this.$store.getters.getUser;
-      const institution = await RemoteServices.getInstitution(user.id);
-      this.institutionId = institution.id!;
-      this.profile = await RemoteServices.getInstitutionProfile(this.institutionId);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
+      await this.$store.dispatch('loading');
+
+      try {
+        // Get the institution ID from the route params instead of the user session
+        this.institutionId = this.$route.params.id;
+
+        if (this.institutionId) {
+          this.profile = await RemoteServices.getInstitutionProfile(this.institutionId);
+        }
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+
+      await this.$store.dispatch('clearLoading');
     }
-    await this.$store.dispatch('clearLoading');
-  }
 
   get hasProfile() {
     const desc = this.profile?.shortDescription;

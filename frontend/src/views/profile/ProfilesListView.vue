@@ -46,6 +46,17 @@
         <template v-slot:item.institution.creationDate="{ item }">
           {{ ISOtoString(item.institution.creationDate) }}
         </template>
+        <template v-slot:item.institution.active="{ item }">
+          </v-chip>
+        </template>
+        <template v-slot:item.action="{ item }">
+          <v-btn
+            icon
+            @click="viewInstitutionDetails(item)"
+          >
+          <v-icon class="pr-2">visibility</v-icon>
+          </v-btn>
+        </template>
         <template v-slot:top>
           <v-card-title>
             <v-text-field
@@ -64,13 +75,16 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { ISOtoString } from "../../services/ConvertDateService";
+import RemoteServices from '../../services/RemoteServices';
+import InstitutionProfile from '@/models/institution/InstitutionProfile';
+import VolunteerProfile from '@/models/volunteer/VolunteerProfile';
 
 @Component({
   methods: { ISOtoString }
 })
 export default class ProfilesListView extends Vue {
-  //volunteerProfiles: VolunteerProfile[] = []; // TODO: this is the object that will be used to fill in the table
-  //institutionProfiles: InstitutionProfile[] = []; // TODO: this is the object that will be used to fill in the table
+  volunteerProfiles: VolunteerProfile[] = []; // Will store volunteer profiles
+  institutionProfiles: InstitutionProfile[] = []; // Will store institution profiles
 
   search: string = '';
 
@@ -135,13 +149,27 @@ export default class ProfilesListView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      // TODO
+      // Fetch institution profiles
+      this.institutionProfiles = await RemoteServices.getAllInstitutionProfiles();
+      // TODO: Fetch volunteer profiles when needed
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
   }
+  
+  viewInstitutionDetails(institution: InstitutionProfile) {
+    // Navigate to the institution details page
+    this.$router.push({ 
+      name: 'institution-profile', 
+      params: { id: institution.id.toString() } 
+    });
+  }
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.table {
+  margin-bottom: 20px;
+}
+</style>
