@@ -16,6 +16,8 @@ import Participation from '@/models/participation/Participation';
 import Assessment from '@/models/assessment/Assessment';
 import Report from '@/models/report/Report';
 import InstitutionProfile from '@/models/profile/InstitutionProfile';
+import VolunteerProfile from '@/models/profile/VolunteerProfile';
+import ActivitySuggestion from '@/models/activitysuggestion/ActivitySuggestion';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -470,7 +472,72 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+  // Activity Suggestion controller
 
+  static async getActivitySuggestionsByInstitution(institutionId: number):Promise<ActivitySuggestion[]> {
+    return httpClient
+      .get(`/activitySuggestions/institution/${institutionId}`)
+      .then((response) => {
+        return response.data.map((suggestion: any) => {
+          return new ActivitySuggestion(suggestion);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async approveActivitySuggestion(
+    institutionId: number,
+    suggestionId: number,
+  ) {
+    return httpClient
+      .put(`/activitySuggestions/institution/${institutionId}/${suggestionId}/approve`)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async rejectActivitySuggestion(
+    institutionId: number,
+    suggestionId: number,
+  ) {
+    return httpClient
+      .put(`/activitySuggestions/institution/${institutionId}/${suggestionId}/reject`)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // Suggestion controller
+
+  static async getVolunteerActivitySuggestions(): Promise<ActivitySuggestion[]> {
+    return httpClient
+      .get('/activitySuggestions/volunteer')
+      .then((response) => {
+        return response.data.map((suggestion: any) => {
+          return new ActivitySuggestion(suggestion);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+  
+  static async createActivitySuggestion(
+    institutionId: number,
+    suggestion: ActivitySuggestion,
+  ): Promise<ActivitySuggestion> {
+    return httpClient
+      .post(`/activitySuggestions/institution/${institutionId}`, suggestion)
+      .then((response) => {
+        return new ActivitySuggestion(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+  
   // Enrollment controller
 
   static async getActivityEnrollments(activityId: number) {
@@ -839,6 +906,48 @@ export default class RemoteServices {
         return response.data.map((theme: any) => {
           return new Theme(theme);
         });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // VolunteerProfile Controller
+
+  static async getVolunteerProfile(
+    volunteerId: number,
+  ): Promise<VolunteerProfile | null> {
+    return httpClient
+      .get(`/profile/volunteer/${volunteerId}`)
+      .then((response) => {
+        if (!response.data) return null;
+        return new VolunteerProfile(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getAllVolunteerProfiles(): Promise<VolunteerProfile[]> {
+    return httpClient
+      .get('/profile/volunteer/all')
+      .then((response) => {
+        return response.data.map((profile: any) => {
+          return new VolunteerProfile(profile);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createVolunteerProfile(
+    profile: VolunteerProfile,
+  ): Promise<VolunteerProfile> {
+    return httpClient
+      .post('/profile/volunteer', profile)
+      .then((response) => {
+        return new VolunteerProfile(response.data);
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));

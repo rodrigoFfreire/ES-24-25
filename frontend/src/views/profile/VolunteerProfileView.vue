@@ -1,33 +1,75 @@
 <template>
   <div class="container">
-    <!-- TODO: Add creation button here (only if there is no profile) -->
-    <div>
-      <h1>Volunteer: SHOW VOLUNTEER NAME HERE</h1>
+    <div v-if="!profile && !$store.getters.getLoading">
+      <h1 class="mb-2">Volunteer Profile</h1>
+      <div v-if="isCurrentUser()">
+        <p class="mb-8">
+          No volunteer profile found. Click the button below to create a new
+          one!
+        </p>
+        <v-btn
+          color="blue"
+          data-cy="createVolunteerProfileBtn"
+          @click="openDialog"
+        >
+          Create My Profile</v-btn
+        >
+      </div>
+      <div v-else>
+        <p class="mb-8">This volunteer has not created a profile yet.</p>
+      </div>
+    </div>
+    <div v-else-if="!$store.getters.getLoading">
+      <h1>Volunteer: {{ profile?.volunteer?.name }}</h1>
       <div class="text-description">
-        <p><strong>Short Bio: </strong> SHOW SHORT BIO HERE</p>
+        <p><strong>Short Bio: </strong> {{ profile.shortBio }}</p>
       </div>
       <div class="stats-container">
         <div class="items">
-          <div ref="volunteerId" class="icon-wrapper">
-            <span>42</span>
+          <div class="icon-wrapper">
+            <span>{{ profile.numTotalEnrollments }}</span>
           </div>
           <div class="project-name">
             <p>Total Enrollments</p>
           </div>
         </div>
-        <!-- TODO: Change 42 above and add other fields here -->
+        <div class="items">
+          <div class="icon-wrapper" data-cy="totalParticipationsStat">
+            <span>{{ profile.numTotalParticipations }}</span>
+          </div>
+          <div class="project-name">
+            <p>Total Participations</p>
+          </div>
+        </div>
+        <div class="items">
+          <div class="icon-wrapper">
+            <span>{{ profile.numTotalAssessments }}</span>
+          </div>
+          <div class="project-name">
+            <p>Total Assessments</p>
+          </div>
+        </div>
+        <div class="items">
+          <div class="icon-wrapper">
+            <span>{{ profile.averageRating.toFixed(2) }}</span>
+          </div>
+          <div class="project-name">
+            <p>Average Rating</p>
+          </div>
+        </div>
       </div>
-
       <div>
         <h2>Selected Participations</h2>
         <div>
           <v-card class="table">
             <v-data-table
               :headers="headers"
+              :items="profile.selectedParticipations"
               :search="search"
               disable-pagination
               :hide-default-footer="true"
               :mobile-breakpoint="0"
+              data-cy="selectedParticipationsTable"
             >
               <template v-slot:item.activityName="{ item }">
                 {{ activityName(item) }}
@@ -54,22 +96,35 @@
         </div>
       </div>
     </div>
+    <volunteer-profile-dialog
+      v-if="showDialog"
+      v-model="showDialog"
+      :activities="activities"
+      :activity-name="activityName"
+      :institution-name="institutionName"
+      :get-member-rating="getMemberRating"
+      @volunteer-profile:close="closeDialog"
+      @volunteer-profile:create="handleProfileCreated"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import RemoteServices from "@/services/RemoteServices";
-import Participation from "@/models/participation/Participation";
-import Activity from "@/models/activity/Activity";
+import RemoteServices from '@/services/RemoteServices';
+import Participation from '@/models/participation/Participation';
+import Activity from '@/models/activity/Activity';
+import VolunteerProfile from '@/models/profile/VolunteerProfile';
+import VolunteerProfileDialog from '@/views/profile/VolunteerProfileDialog.vue';
 
 @Component({
-  components: {
-  }
+  components: { VolunteerProfileDialog },
 })
 export default class VolunteerProfileView extends Vue {
   userId: number = 0;
+  showDialog: boolean = false;
 
+  profile: VolunteerProfile | null = null;
   activities: Activity[] = [];
 
   search: string = '';
@@ -97,7 +152,7 @@ export default class VolunteerProfileView extends Vue {
       value: 'memberReview',
       align: 'left',
       width: '40%',
-    }
+    },
   ];
 
   async created() {
@@ -106,28 +161,45 @@ export default class VolunteerProfileView extends Vue {
     try {
       this.userId = Number(this.$route.params.id);
       this.activities = await RemoteServices.getActivities();
-
-      // TODO
+      this.profile = await RemoteServices.getVolunteerProfile(this.userId);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
   }
 
+  openDialog() {
+    this.showDialog = true;
+  }
+
+  closeDialog() {
+    this.showDialog = false;
+  }
+
+  isCurrentUser() {
+    return this.$store.getters.getUser.id == this.userId;
+  }
+
+  handleProfileCreated(newProfile: VolunteerProfile) {
+    this.profile = newProfile;
+    this.closeDialog();
+  }
+
   activityName(participation: Participation) {
-    return this.activities.find(activity => activity.id == participation.activityId)?.name;
+    return this.activities.find(
+      (activity) => activity.id == participation.activityId,
+    )?.name;
   }
 
   institutionName(participation: Participation) {
-    let activity = this.activities.find(activity => activity.id == participation.activityId);
+    let activity = this.activities.find(
+      (activity) => activity.id == participation.activityId,
+    );
     return activity?.institution.name;
   }
 
   getMemberRating(participation: Participation): string {
-    if (
-      !participation ||
-      participation.memberRating == null
-    ) {
+    if (!participation || participation.memberRating == null) {
       return '';
     }
     return this.convertToStars(participation.memberRating);
