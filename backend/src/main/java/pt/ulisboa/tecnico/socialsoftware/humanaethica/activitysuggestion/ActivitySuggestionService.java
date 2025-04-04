@@ -47,17 +47,15 @@ public class ActivitySuggestionService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<ActivitySuggestionDto> approveActivitySuggestion(Integer institutionId, Integer suggestionId) {
+    public void approveActivitySuggestion(Integer institutionId, Integer suggestionId) {
         ActivitySuggestion suggestion = activitySuggestionRepository.findById(suggestionId).orElseThrow(() -> new HEException(SUGGESTION_NOT_FOUND, Integer.toString(suggestionId)));
         suggestion.setState(ActivitySuggestion.State.APPROVED);
-        return getActivitySuggestionsByInstitution(institutionId);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<ActivitySuggestionDto> rejectActivitySuggestion(Integer institutionId, Integer suggestionId) {
+    public void rejectActivitySuggestion(Integer institutionId, Integer suggestionId) {
         ActivitySuggestion suggestion = activitySuggestionRepository.findById(suggestionId).orElseThrow(() -> new HEException(SUGGESTION_NOT_FOUND, Integer.toString(suggestionId)));
         suggestion.setState(ActivitySuggestion.State.REJECTED);
-        return getActivitySuggestionsByInstitution(institutionId);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

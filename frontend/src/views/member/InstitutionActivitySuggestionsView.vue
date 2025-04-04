@@ -10,6 +10,10 @@
       :mobile-breakpoint="0"
       data-cy="institutionActivitySuggestionsTable"
     >
+    <template v-slot:item.institutionName="{ item }">
+        <span>{{ institutionName() }}</span>
+      </template>
+
       <template v-slot:top>
         <v-card-title>
           <v-text-field
@@ -156,10 +160,11 @@ export default class InstitutionActivitySuggestionsView extends Vue {
   async approveActivitySuggestion(suggestion: ActivitySuggestion) {
     if (suggestion.id !== null && this.institution.id != null) {
       try {
-        this.suggestions = await RemoteServices.approveActivitySuggestion(
+        await RemoteServices.approveActivitySuggestion(
           this.institution.id,
           suggestion.id,
         );
+        suggestion.state = 'APPROVED';
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
@@ -169,10 +174,11 @@ export default class InstitutionActivitySuggestionsView extends Vue {
   async rejectActivitySuggestion(suggestion: ActivitySuggestion) {
     if (suggestion.id !== null && this.institution.id != null) {
       try {
-        this.suggestions = await RemoteServices.rejectActivitySuggestion(
+        await RemoteServices.rejectActivitySuggestion(
           this.institution.id,
           suggestion.id,
         );
+        suggestion.state = 'REJECTED';
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
