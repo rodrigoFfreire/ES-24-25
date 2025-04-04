@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.UserService;
 
 import java.security.Principal;
 import java.util.Optional;
+import java.util.List;
 
 @RestController()
 public class InstitutionProfileController {
@@ -31,4 +32,10 @@ public class InstitutionProfileController {
         int userId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
         return institutionProfileService.createInstitutionProfile(userService.getInstitution(userId).getId(), institutionProfileDto);
     }
+
+    @GetMapping("/profile/institution/all")
+    public List<InstitutionProfileDto> getAllInstitutionProfiles() {
+        return institutionProfileService.getAllInstitutionProfiles();
+    }
+
 }

@@ -15,7 +15,7 @@ const ENROLLMENT_COLUMNS = "enrollment (id, enrollment_date_time, motivation, ac
 const PARTICIPATION_COLUMNS = "participation (id, acceptance_date, member_rating, member_review, volunteer_rating, volunteer_review, activity_id, volunteer_id)"
 const ASSESSMENT_COLUMNS = "assessment (id, review, review_date, institution_id, volunteer_id)";
 const REPORT_COLUMNS = "report (id, justification, activity_id, volunteer_id)";
-
+const INSTITUTION_PROFILE_COLUMNS = "institution_profile (institution_id, short_description)";
 
 const now = new Date();
 const tomorrow = new Date(now);
@@ -37,23 +37,27 @@ Cypress.Commands.add('deleteAllButArs', () => {
   cy.task('queryDatabase', {
     query: "DELETE FROM ASSESSMENT",
     credentials: credentials,
-  })
+  });
   cy.task('queryDatabase', {
     query: "DELETE FROM PARTICIPATION",
     credentials: credentials,
-  })
+  });
   cy.task('queryDatabase', {
     query: "DELETE FROM ENROLLMENT",
     credentials: credentials,
-  })
+  });
   cy.task('queryDatabase', {
     query: "DELETE FROM REPORT",
     credentials: credentials,
-  })
+  });
   cy.task('queryDatabase', {
     query: "DELETE FROM ACTIVITY",
     credentials: credentials,
-  })
+  });
+  cy.task('queryDatabase', {
+    query: "DELETE FROM institution_profile", // ← esta linha resolve o erro
+    credentials: credentials,
+  });
   cy.task('queryDatabase', {
     query: "DELETE FROM VOLUNTEER_PROFILE",
     credentials: credentials
@@ -277,6 +281,52 @@ Cypress.Commands.add('createDatabaseInfoForVolunteerAssessments', () => {
   })
 });
 
+Cypress.Commands.add('createDatabaseInfoForInstitutionProfiles', () => {
+  // Existing setup code for activities, enrollments, participations, and assessments
+  for (let i = 1; i <= 4; i++) {
+    cy.task('queryDatabase', {
+      query: "INSERT INTO " + ACTIVITY_COLUMNS + generateActivityTuple(i, `A${i}`, `Descrição ${i}`, "2025-04-10 12:00:00", "2025-04-12 12:00:00", "2025-04-15 12:00:00", 10, 1),
+      credentials
+    });
+    cy.task('queryDatabase', {
+      query: "INSERT INTO " + ENROLLMENT_COLUMNS + generateEnrollmentTuple(i, i, 3),
+      credentials
+    });
+    cy.task('queryDatabase', {
+      query: "INSERT INTO " + PARTICIPATION_COLUMNS + generateParticipationTuple(i, "", i, 3),
+      credentials
+    });
+    cy.task('queryDatabase', {
+      query: "INSERT INTO " + ASSESSMENT_COLUMNS + generateAssessmentTuple(i, `Review ${i}`, 1, 3),
+      credentials
+    });
+  }
+
+  // New code to create additional institution, member, and profile
+  // Create new institution (id 5)
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + INSTITUTION_COLUMNS + generateInstitutionTuple(5, "New Demo Institution", "000000003"),
+    credentials: credentials,
+  });
+
+  // Create new member (user 6) linked to institution 5
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + USER_COLUMNS + generateUserTuple(6, "MEMBER", "NEW-MEMBER", "MEMBER", 5),
+    credentials: credentials,
+  });
+
+  // Create auth user for the new member
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + AUTH_USERS_COLUMNS + generateAuthUserTuple(6, "DEMO", "new-member", 6),
+    credentials: credentials,
+  });
+
+  cy.task('queryDatabase', {
+    query: "INSERT INTO " + INSTITUTION_PROFILE_COLUMNS + generateInstitutionProfileTuple(5, "This is just a short description"),
+    credentials: credentials,
+  });
+});
+
 Cypress.Commands.add('createDatabaseInfoForVolunteerProfile', () => {
   // Activties (5)
   cy.task('queryDatabase', {
@@ -423,3 +473,8 @@ function generateParticipationTuple(id, memberReview, activityId, volunteerId) {
 function generateAssessmentTuple(id, review, institutionId, volunteerId) {
   return "VALUES (" + id + ", '" + review + "', '2024-02-07 18:51:37.595713', '" + institutionId + "', " + volunteerId + ")";
 }
+
+function generateInstitutionProfileTuple(institutionId, shortDescription) {
+    return "VALUES (" + institutionId + ", '" + shortDescription + "')";
+}
+

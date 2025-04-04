@@ -1,107 +1,173 @@
 <template>
-  <div class="container">
-    <!-- TODO: Add creation button here (only if there is no profile) -->
-    <div>
-      <h1>Institution: SHOW INSTITUTION NAME HERE</h1>
-      <div class="text-description">
-        <p><strong>Short Description: </strong> SHOW SHORT DESCRIPTION HERE</p>
-      </div>
-      <div class="stats-container">
-        <div class="items">
-          <div ref="institutionId" class="icon-wrapper">
-            <span>42</span>
-          </div>
-          <div class="project-name">
-            <p>Total Members</p>
-          </div>
-        </div>
-        <!-- TODO: Change 42 above and add other fields here -->
-     </div>
+  <div v-if="!hasProfile">
+    <h1 class="mb-4">Institution Profile</h1>
+    <p class="mb-8">
+      No institution profile found. Click the button below to create a new one!
+    </p>
+    <v-btn color="blue" data-cy="createInstitutionProfile" @click="openDialog">Create Institution Profile</v-btn>
+    <InstitutionProfileDialog
+      v-if="institutionId !== null"
+      :dialog.sync="showDialog"
+      :institutionId="institutionId"
+      @institution-profile:close="closeDialog"
+      @institution-profile:create="onProfileCreated"
+    />
+  </div>
 
-      <div>
-        <h2>Selected Assessments</h2>
-        <div>
-          <v-card class="table">
-            <v-data-table
-              :headers="headers"
-              :search="search"
-              disable-pagination
-              :hide-default-footer="true"
-              :mobile-breakpoint="0"
-              data-cy="institutionAssessmentsTable"
-            >
-              <template v-slot:item.reviewDate="{ item }">
-                {{ ISOtoString(item.reviewDate) }}
-              </template>
-              <template v-slot:top>
-                <v-card-title>
-                  <v-text-field
-                    v-model="search"
-                    append-icon="search"
-                    label="Search"
-                    class="mx-2"
-                  />
-                  <v-spacer />
-                </v-card-title>
-              </template>
-            </v-data-table>
-          </v-card>
+  <div v-else>
+    <h1 data-cy="institution-profile-name">Institution: {{ profile?.institution.name }}</h1>
+    <div class="text-description">
+      <p data-cy="institution-profile-description"><strong>Short Description: </strong> {{ profile?.shortDescription }}</p>
+    </div>
+
+    <div class="stats-container">
+      <!-- Total Members -->
+      <div class="items">
+        <div class="icon-wrapper">
+          <span>{{ profile?.numMembers }}</span>
+        </div>
+        <div class="project-name">
+          <p>Total Members</p>
         </div>
       </div>
+
+      <!-- Total Activities -->
+      <div class="items">
+        <div class="icon-wrapper">
+          <span>{{ profile?.numActivities }}</span>
+        </div>
+        <div class="project-name">
+          <p>Total Activities</p>
+        </div>
+      </div>
+
+      <!-- Total Volunteers -->
+      <div class="items">
+        <div class="icon-wrapper">
+          <span>{{ profile?.numVolunteers }}</span>
+        </div>
+        <div class="project-name">
+          <p>Total Volunteers</p>
+        </div>
+      </div>
+
+      <!-- Total Assessments -->
+      <div class="items">
+        <div class="icon-wrapper">
+          <span>{{ profile?.numAssessments }}</span>
+        </div>
+        <div class="project-name">
+          <p>Total Assessments</p>
+        </div>
+      </div>
+
+      <!-- Average Rating -->
+      <div class="items">
+        <div class="icon-wrapper">
+          <span>{{ (profile?.averageRating || 0).toFixed(2) }}</span>
+        </div>
+        <div class="project-name">
+          <p>Average Rating</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2>Selected Assessments</h2>
+      <v-card class="table">
+        <v-data-table
+          :headers="headers"
+          :items="profile?.selectedAssessments"
+          :search="search"
+          disable-pagination
+          :hide-default-footer="true"
+          :mobile-breakpoint="0"
+          data-cy="institutionAssessmentsTable"
+        >
+          <template v-slot:item.reviewDate="{ item }">
+            {{ ISOtoString(item.reviewDate) }}
+          </template>
+          <template v-slot:top>
+            <v-card-title>
+              <v-text-field
+                v-model="search"
+                append-icon="search"
+                label="Search"
+                class="mx-2"
+              />
+              <v-spacer />
+            </v-card-title>
+          </template>
+        </v-data-table>
+      </v-card>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ISOtoString } from "../../services/ConvertDateService";
+import RemoteServices from '@/services/RemoteServices';
+import { ISOtoString } from '@/services/ConvertDateService';
+import InstitutionProfile from '@/models/profile/InstitutionProfile';
+import InstitutionProfileDialog from '@/views/profile/InstitutionProfileDialog.vue';
 
 @Component({
   methods: { ISOtoString },
   components: {
+    InstitutionProfileDialog,
   }
 })
 export default class InstitutionProfileView extends Vue {
-  institutionId: number = 0;
-
+  institutionId: number | null = null;
+  profile: InstitutionProfile | null = null;
   search: string = '';
+  showDialog: boolean = false;
+
   headers: object = [
-    {
-      text: 'Volunteer Name',
-      value: 'volunteerName',
-      align: 'left',
-      width: '30%',
-    },
-    {
-      text: 'Review',
-      value: 'review',
-      align: 'left',
-      width: '30%',
-    },
-    {
-      text: 'Review Date',
-      value: 'reviewDate',
-      align: 'left',
-      width: '40%',
-    }
+    { text: 'Volunteer Name', value: 'volunteerName', align: 'left', width: '30%' },
+    { text: 'Review', value: 'review', align: 'left', width: '30%' },
+    { text: 'Review Date', value: 'reviewDate', align: 'left', width: '40%' }
   ];
-
   async created() {
-    await this.$store.dispatch('loading');
-
-    try {
-      this.institutionId = Number(this.$route.params.id);
-
-      // TODO
-    } catch (error) {
-      await this.$store.dispatch('error', error);
+      await this.$store.dispatch('loading');
+      try {
+        this.institutionId = Number(this.$route.params.id);
+        const cachedProfile = this.$store.getters.getCurrentInstitutionProfile;
+        
+        // Check if cached profile matches route ID
+        if (cachedProfile?.institution.id === this.institutionId) {
+          this.profile = cachedProfile; // Use cached data
+        } else {
+          // Fetch fresh data if no match or direct URL access
+          this.profile = await RemoteServices.getInstitutionProfile(this.institutionId);
+        }
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+      await this.$store.dispatch('clearLoading');
     }
-    await this.$store.dispatch('clearLoading');
+
+  get hasProfile() {
+    const desc = this.profile?.shortDescription;
+    return desc !== undefined && desc !== null && desc.trim() !== '';
+  }
+
+  openDialog() {
+    this.showDialog = true;
+  }
+
+  closeDialog() {
+    this.showDialog = false;
+  }
+
+  onProfileCreated(profile: InstitutionProfile) {
+    this.profile = profile;
+    this.showDialog = false;
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .stats-container {
   display: flex;
   flex-direction: row;
@@ -131,12 +197,9 @@ export default class InstitutionProfileView extends Vue {
 
 .icon-wrapper {
   font-size: 100px;
+  align-self: end;
   transform: translateY(0px);
   transition: all 0.6s;
-}
-
-.icon-wrapper {
-  align-self: end;
 }
 
 .project-name {

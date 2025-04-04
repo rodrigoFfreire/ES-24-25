@@ -45,9 +45,9 @@
       </v-data-table>
     </v-card>
     <!-- Institution Profiles -->
-    <v-card class="table">
+    <v-card class="table" data-cy="institution-profiles-card">
       <v-card-title>
-        <h2>Institution Profiles</h2>
+        <h2 data-cy="institution-profiles-title">Institution Profiles</h2>
       </v-card-title>
       <v-data-table
         :headers="headersInstitutionProfile"
@@ -56,9 +56,22 @@
         disable-pagination
         :hide-default-footer="true"
         :mobile-breakpoint="0"
+        data-cy="institution-profiles-table"
       >
         <template v-slot:item.institution.creationDate="{ item }">
-          {{ ISOtoString(item.institution.creationDate) }}
+          <span data-cy="institution-creation-date">{{ ISOtoString(item.institution.creationDate) }}</span>
+        </template>
+        <template v-slot:item.institution.active="{ item }">
+          <span data-cy="institution-active-status"></span>
+        </template>
+        <template v-slot:item.action="{ item }">
+          <v-btn
+            icon
+            data-cy="view-institution-profile"
+            @click="viewInstitutionDetails(item)"
+          >
+            <v-icon class="pr-2" data-cy="view-institution-icon">visibility</v-icon>
+          </v-btn>
         </template>
         <template v-slot:top>
           <v-card-title>
@@ -67,8 +80,16 @@
               append-icon="search"
               label="Search"
               class="mx-2"
+              data-cy="institution-search-field"
             />
           </v-card-title>
+        </template>
+        <!-- You might want to add these for individual rows or columns -->
+        <template v-slot:item.institution.name="{ item }">
+          <span data-cy="institution-name">{{ item.institution.name }}</span>
+        </template>
+        <template v-slot:item.institution.id="{ item }">
+          <span data-cy="institution-id">{{ item.institution.id }}</span>
         </template>
       </v-data-table>
     </v-card>
@@ -77,16 +98,18 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ISOtoString } from '../../services/ConvertDateService';
+import { ISOtoString } from "../../services/ConvertDateService";
+import RemoteServices from '../../services/RemoteServices';
+import InstitutionProfile from '@/models/profile/InstitutionProfile';
 import VolunteerProfile from '@/models/profile/VolunteerProfile';
-import RemoteServices from '@/services/RemoteServices';
 
 @Component({
   methods: { ISOtoString },
 })
 export default class ProfilesListView extends Vue {
-  volunteerProfiles: VolunteerProfile[] = [];
-  //institutionProfiles: InstitutionProfile[] = []; // TODO: this is the object that will be used to fill in the table
+  volunteerProfiles: VolunteerProfile[] = []; // Will store volunteer profiles
+  institutionProfiles: InstitutionProfile[] = []; // Will store institution profiles
+
   search: string = '';
 
   headersVolunteerProfile: object = [
@@ -165,16 +188,32 @@ export default class ProfilesListView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
+      this.institutionProfiles = await RemoteServices.getAllInstitutionProfiles();
       await this.fetchVolunteerProfiles();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
   }
+  
+  viewInstitutionDetails(institutionProfile: InstitutionProfile) {
+      if (institutionProfile?.institution?.id) {
+        this.$store.commit('setCurrentInstitutionProfile', institutionProfile);
+        this.$router.push({
+          name: 'institution-profile',
+          params: { id: institutionProfile.institution.id.toString() }
+        });
+      } else {
+        console.error('Invalid institutionProfile:', institutionProfile);
+      }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+.table {
+  margin-bottom: 20px;
+}
 .date-fields-container {
   display: flex;
   flex-direction: column;

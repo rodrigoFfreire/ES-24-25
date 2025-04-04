@@ -15,6 +15,7 @@ import Enrollment from '@/models/enrollment/Enrollment';
 import Participation from '@/models/participation/Participation';
 import Assessment from '@/models/assessment/Assessment';
 import Report from '@/models/report/Report';
+import InstitutionProfile from '@/models/profile/InstitutionProfile';
 import VolunteerProfile from '@/models/profile/VolunteerProfile';
 import ActivitySuggestion from '@/models/activitysuggestion/ActivitySuggestion';
 
@@ -681,6 +682,41 @@ export default class RemoteServices {
       });
   }
 
+  // Profile Controller
+
+  static async getAllInstitutionProfiles(): Promise<InstitutionProfile[]> {
+    return httpClient
+      .get('/profile/institution/all')
+      .then((response) => {
+        return response.data.map((profile: any) => new InstitutionProfile(profile));
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getInstitutionProfile(id: number): Promise<InstitutionProfile> {
+    return httpClient
+      .get(`/profile/institution/${id}`)
+      .then((response) => {
+        return new InstitutionProfile(response.data); // assumes you have a model
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createInstitutionProfile(profile: InstitutionProfile): Promise<InstitutionProfile> {
+    return httpClient
+      .post('/profile/institution', profile)
+      .then(response => new InstitutionProfile(response.data))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+  
+  
+  
   // Assessment Controller
 
   static async getVolunteerAssessments(): Promise<Assessment[]> {
