@@ -4,10 +4,16 @@
       :headers="headers"
       :items="activitySuggestions"
       :search="search"
+      :sort-by="['name']"
       disable-pagination
       :hide-default-footer="true"
       :mobile-breakpoint="0"
+      data-cy="volunteerActivitySuggestionsTable"
     >
+      <template v-slot:item.institutionName="{ item }">
+        <span>{{ getInstitutionName(item.institutionId) }}</span>
+      </template>
+
       <template v-slot:top>
         <v-card-title>
           <v-text-field
@@ -17,26 +23,53 @@
             class="mx-2"
           />
           <v-spacer />
+          <v-btn
+            color="primary"
+            @click="dialog = true"
+            data-cy="newActivitySuggestionButton"
+          >
+            New Activity Suggestion
+          </v-btn>
         </v-card-title>
       </template>
     </v-data-table>
+
+    <activity-suggestion-dialog
+      v-model="dialog"
+      @save-activity-suggestion="onSuggestionCreated"
+      @close-activity-suggestion-dialog="dialog = false"
+    />
   </v-card>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import ActivitySuggestion from '@/models/activitysuggestion/ActivitySuggestion';
+import ActivitySuggestionDialog from '@/views/volunteer/ActivitySuggestionDialog.vue';
+import Institution from '@/models/institution/Institution';
 
 @Component({
   components: {
+    'activity-suggestion-dialog': ActivitySuggestionDialog,
   },
 })
 export default class VolunteerActivitySuggestionsView extends Vue {
-  //activitySuggestions: ActivitySuggestion[] = []; // TODO: this is the object that will be used to fill in the table
+  activitySuggestions: ActivitySuggestion[] = [];
+  institutions: Institution[] = [];
   search: string = '';
+  dialog: boolean = false;
+
   headers: object = [
     {
       text: 'Name',
       value: 'name',
+      align: 'left',
+      width: '10%',
+    },
+    {
+      text: 'Institution',
+      value: 'institutionName',
       align: 'left',
       width: '10%',
     },
@@ -93,11 +126,20 @@ export default class VolunteerActivitySuggestionsView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      // TODO
+      this.activitySuggestions = await RemoteServices.getVolunteerActivitySuggestions();
+      this.institutions = await RemoteServices.getInstitutions();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  getInstitutionName(searchId:number) {
+    return this.institutions.find((institution) => institution.id == searchId)?.name;
+  }
+
+  onSuggestionCreated(newSuggestion: ActivitySuggestion) {
+    this.activitySuggestions.push(newSuggestion);
   }
 }
 </script>
